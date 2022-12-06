@@ -21,12 +21,14 @@ class RoboticArm:
         self.com_port.write('move '+name+'\r')
         time.sleep(0.05)
 
-    def create_pos(self, name:str, x, y, z):
+    def create_pos(self, name:str, x, y, z) -> None:
         self.com_port.write('defp '+name+'\r')
         time.sleep(0.05)
-        self.com_port.write('SETPV '+name+' x '+x+'\r')
+        self.com_port.write('here '+name+'\r')
         time.sleep(0.05)
-        self.com_port.write('SETPV '+name+' y '+y+'\r')
+        self.com_port.write('SETPVc '+name+' x '+x+'\r')
         time.sleep(0.05)
-        self.com_port.write('SETPV '+name+' z '+z+'\r')
+        self.com_port.write('SETPVc '+name+' y '+y+'\r')
+        time.sleep(0.05)
+        self.com_port.write('SETPVc '+name+' z '+z+'\r')
         time.sleep(0.05)
