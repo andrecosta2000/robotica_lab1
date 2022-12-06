@@ -1,3 +1,6 @@
+#Authors:
+#Joca
+
 import svgpathtools
 import potrace
 import cv2
