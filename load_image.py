@@ -28,11 +28,13 @@ class PATH:
             #print(path)
             for segment in path:
                 if isinstance(segment, potrace.BezierSegment):
+                    print('-> BezierSegment')
                     print(segment.c1.x, '\t', segment.c1.x)
                     print(segment.c2.x, '\t', segment.c2.y)
                     print(segment.end_point.x, '\t',  segment.end_point.y)
                 if isinstance(segment, potrace.CornerSegment):
-                    #print(segment.c.x, '\t', segment.c.x)
+                    print('-> CornerSegment')
+                    print(segment.c.x, '\t', segment.c.x)
                     print(segment.end_point.x, '\t', segment.end_point.y)
                 """ print('(', segment.start.real, ' , ', segment.start.imag,')', 
                     '->', '(', segment.end.real, ' , ', segment.end.imag,')') """
@@ -42,7 +44,7 @@ class PATH:
 #potrace.potrace.CornerSegment
 
 path = PATH()
-path.load_paths_png("images/test_draw_2.png")
+path.load_paths_png("images/test_draw_1.png")
 path.generate_arm_positions()
 """ for path in path.paths:
     for segment in path:
