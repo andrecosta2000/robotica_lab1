@@ -1,9 +1,10 @@
 #Authors:
 #Joca
 
-import svgpathtools
-import potrace
+#import svgpathtools
+#import potrace
 import cv2
+import matplotlib.pyplot as plt
 
 class PATH:
     def __init__(self) -> None:
@@ -13,9 +14,37 @@ class PATH:
     ### loads file
     def load_paths_png(self, file_name: str):
         """Loads paths from <file_name>.png image"""
-        im1 = cv2.imread(file_name, 0)
-        bmp = potrace.Bitmap(im1)
+        font = cv2.FONT_HERSHEY_COMPLEX
+        im1 = cv2.imread(file_name)
+        imgray = cv2.cvtColor(im1, cv2.COLOR_BGR2GRAY)
+        ret, thresh = cv2.threshold(imgray, 127, 255, cv2.THRESH_BINARY)
+        contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        for i in contours:
+            approx = cv2.approxPolyDP(i,0.009*cv2.arcLength(i,True),True)
+            cv2.drawContours(imgray,[approx],0,(0,0,255),5)
+            n=approx.ravel()
+            k=0
+            for j in n:
+                if(k%2==0):
+                    x = n[k]
+                    y = n[k+1]
+                    print(x,y)
+                    string=str(x)+""+str(y)
+                    if(k==0):
+                        cv2.putText(imgray,"Arrow tip",(x,y),font,0.5,(255,0,0))
+                    else:
+                        cv2.putText(imgray,string,(x,y),font,0.5,(0,255,0))
+                k=k+1
+            cv2.imshow('image2',imgray)
+            if cv2.waitKey(0) & 0xFF ==ord('q'):
+                cv2.destroyAllWindows()
+
+                            #im2= cv2.drawContours(im1, contours, -1, (0,255,0), 0)
+        #plt.imshow(im2)
+        #plt.show()
+        #bmp = potrace.Bitmap(im1)
         #print(bmp.)
+        
         self.paths = bmp.trace()
     
     def load_paths_svg(self, file_name: str):
