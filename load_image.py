@@ -27,7 +27,7 @@ class PATH:
         #ima=cv.drawContours(im1, contours, -1, (0,255,0), 0)
         for cnt in contours :
   
-            approx = cv.approxPolyDP(cnt, 0.00009*cv.arcLength(cnt, True), True)
+            approx = cv.approxPolyDP(cnt, 0.0003*cv.arcLength(cnt, True), False)
         
             # draws boundary of contours.
             cv.drawContours(img2, [approx], -1, (0, 255, 0), 2) 
@@ -59,9 +59,9 @@ class PATH:
         #cv.imshow('image2', img2)
         plt.imshow(img2)
         plt.show()
-        # Exiting the window if 'q' is pressed on the keyboard.
-        cv.waitKey(0)
-        # Exiting the window if 'q' is pressed on the keyboard
+        print(approx)
+        
+
         #self.paths = bmp.trace()
     
     def load_paths_svg(self, file_name: str):
