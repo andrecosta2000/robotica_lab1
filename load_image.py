@@ -33,14 +33,11 @@ class PATH:
                     distance = math.sqrt((self.points[j]-self.points[i])**2 + (self.points[j+1]-self.points[i+1])**2)
                     if distance < 20:
                         print(distance, self.points[j], self.points[j+1], self.points[i], self.points[i+1])
-                        #self.points=self.points[:i]
                         counter=i
                         print(counter)
                         self.points.pop(i)
                         self.points.pop(i)
                         self.n_points[0]-=2
-                        #print(self.points)
-                        #print(len(self.points))
                     i += 2
                 j+=2
                 i=j+2
