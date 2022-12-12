@@ -1,4 +1,4 @@
-from serial_func import SerialPort
+import serial
 import time
 # This function listens the serial port for wait_time seconds
 # waiting for ASCII characters to be sent by the robot
@@ -6,7 +6,7 @@ import time
 
 class SerialPort:
     def __init__(self, serial_device: str, baud_rate: int) -> None:
-        self.port = SerialPort(serial_device)#, stopbits)
+        self.port = serial.Serial(serial_device, baud_rate)#, stopbits)
         print("COM port in use: {0}".format(self.port.name))
 
     def read_and_wait(self, wait_time):

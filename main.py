@@ -1,13 +1,17 @@
 from robotic_arm import RoboticArm
-import load_image
+from load_image import PATH
 import time
 
 if __name__ == "__main__":
     print('Starting')
     
+    drawing = PATH()
+    drawing.load_paths_png("images/test_draw_1.png")
+    positions,n_paths =drawing.generate_arm_positions()
+
     robot = RoboticArm()
     robot.open_coms('/dev/tty.usbserial-AB6YJ9ZL', 9600)
-    #robot.home()
+    """ robot.home()
     print('-----------------------------')
     print('-----------------------------')
     print('HOMING')
@@ -18,5 +22,4 @@ if __name__ == "__main__":
     print('-> Creating Position')
     robot.create_pos('r22', 500, 500, 385)
     print('-> Moving to position (500,500,385)')
-    robot.move_pos('r2')
-    
+    robot.move_pos('r2') """
