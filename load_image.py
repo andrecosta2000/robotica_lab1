@@ -32,19 +32,22 @@ class PATH:
             while (j < int(self.n_points[0]) ):
                 while (i < int(self.n_points[0]) ):
                     distance = math.sqrt((self.points[j]-self.points[i])**2 + (self.points[j+1]-self.points[i+1])**2)
-                    if distance < 100:
+                    if distance < 20:
                         print(distance, self.points[j], self.points[j+1], self.points[i], self.points[i+1])
                         #self.points=self.points[:i]
-                        counter+=1
-                       
+                        counter=i
+                        self.points.pop(i)
+                        self.points.pop(i)
+                        self.n_points[0]-=2
                         #print(self.points)
                         #print(len(self.points))
                     i += 2
                 j+=2
                 i=j+2
-            print(counter)
-            #mediumpoint=int(counter/2)
-            self.points=self.points[:(int(self.n_points[0])-2*counter)]
+            print("porra",self.n_points, counter)
+            self.points=self.points[:counter]
+
+            print(len(self.points))
 
         """while (j<len(self.points)):
             i=j+2
@@ -63,14 +66,14 @@ class PATH:
         print(len(self.points))
         #cv.drawContours(img3, self.points, -1 , (0, 255, 0), 2)
         aux=np.array(self.points).reshape(-1,2)
-        #print(aux)
+        print(len(aux))
         
         
             
-        for i in range(len(self.points)-1):
+        for i in range(len(aux)):
             x = aux[i][0]
             y = aux[i][1]
-            string = str(x) + " " + str(y)
+            string = str(x) + " " + str(y) + " " + str(i)
                 # text on remaining co-ordinates.
             cv.putText(img3, string, (x, y), 
                     font, 1, (255, 0, 0)) 
@@ -119,7 +122,7 @@ class PATH:
 
         for cnt in contours :
   
-            approx = cv.approxPolyDP(cnt, 0.001*cv.arcLength(cnt, False), True)
+            approx = cv.approxPolyDP(cnt, 0.0005*cv.arcLength(cnt, True), True)
             # draws boundary of contours.
             cv.drawContours(img2, [approx], -1, (0, 255, 0), 2) 
             # Used to flatted the array containing
