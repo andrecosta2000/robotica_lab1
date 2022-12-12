@@ -24,7 +24,6 @@ class PATH:
         
         j=0
         i=2
-        #self.points.reshape(-1,2)
         counter=0
         if(len(self.n_points) == 1): #means that we only have one contour
             #mediumpoint=int(int(self.n_points[0])/2)+4
@@ -36,6 +35,7 @@ class PATH:
                         print(distance, self.points[j], self.points[j+1], self.points[i], self.points[i+1])
                         #self.points=self.points[:i]
                         counter=i
+                        print(counter)
                         self.points.pop(i)
                         self.points.pop(i)
                         self.n_points[0]-=2
@@ -44,10 +44,9 @@ class PATH:
                     i += 2
                 j+=2
                 i=j+2
-            print("porra",self.n_points, counter)
+            print(self.points)
             self.points=self.points[:counter]
 
-            print(len(self.points))
 
         """while (j<len(self.points)):
             i=j+2
@@ -122,7 +121,7 @@ class PATH:
 
         for cnt in contours :
   
-            approx = cv.approxPolyDP(cnt, 0.0005*cv.arcLength(cnt, True), True)
+            approx = cv.approxPolyDP(cnt, 0.0009*cv.arcLength(cnt, True), True)
             # draws boundary of contours.
             cv.drawContours(img2, [approx], -1, (0, 255, 0), 2) 
             # Used to flatted the array containing
