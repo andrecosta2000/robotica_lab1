@@ -6,7 +6,8 @@ import time
 
 class SerialPort:
     def __init__(self, serial_device: str, baud_rate: int) -> None:
-        self.port = serial.Serial(serial_device, baud_rate)#, stopbits)
+        print('here')
+        self.port = serial.Serial(serial_device, baud_rate, timeout=2)#, stopbits)
         print("COM port in use: {0}".format(self.port.name))
 
     def read_and_wait(self, wait_time):
@@ -16,13 +17,14 @@ class SerialPort:
 
         while flag:
             # Wait until there is data waiting in the serial buffer
+            #print(self.port.readline())
             if self.port.in_waiting > 0:
                 # Read data out of the buffer until a carriage return / new line is found
                 serString = self.port.readline()
                 # Print the contents of the serial data
                 try:
                     output = serString.decode("Ascii")
-                    print(serString.decode("Ascii"))
+                    #print(serString.decode("Ascii"))
                 except:
                     pass
             else:
