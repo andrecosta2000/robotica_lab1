@@ -16,18 +16,39 @@ class PATH:
         self.paths = None
         self.points: list = []
 
-    ### loads file
+    def remove_point_contour(self, n):
+        j=i=0
+        #i=0
+        while (j < int(self.n_points[n]) ):
+                while (i < int(self.n_points[n]) ):
+                    distance = math.sqrt((self.points[j]-self.points[i])**2 + (self.points[j+1]-self.points[i+1])**2)
+                    if distance < 35:
+                        print(distance, self.points[j], self.points[j+1], self.points[i], self.points[i+1])
+                        counter=i
+                        print(counter)
+                        self.points.pop(i)
+                        self.points.pop(i)
+                        self.n_points[n]-=2
+                    i += 2
+                j+=2
+                i=j+2
+        #print(self.points)
+        self.points=self.points[:counter]
+
     def removepoints(self, file_name: str):
-        i=0
         font = cv.FONT_HERSHEY_COMPLEX
         img3 = cv.imread(file_name, cv.IMREAD_COLOR)
         
         j=0
         i=2
         counter=0
-        if(len(self.n_points) == 1): #means that we only have one contour
-            #mediumpoint=int(int(self.n_points[0])/2)+4
-            #self.points=self.points[0:mediumpoint]
+
+        for n in range(len(self.n_points)):
+            self.remove_point_contour(n)
+       
+            #--------------Resolveu para um contorno-----------------------
+        """if(len(self.n_points) == 1): #means that we only have one contour
+            
             while (j < int(self.n_points[0]) ):
                 while (i < int(self.n_points[0]) ):
                     distance = math.sqrt((self.points[j]-self.points[i])**2 + (self.points[j+1]-self.points[i+1])**2)
@@ -44,35 +65,30 @@ class PATH:
             print(self.points)
             self.points=self.points[:counter]
 
-
-        """while (j<len(self.points)):
-            i=j+2
-            while(i<len(self.points) ):
-                distance = np.sqrt((self.points[j]-self.points[i])**2 + (self.points[j+1]-self.points[i+1])**2)
-                if distance < 100:
-                    self.points.pop(i)
-                    self.points.pop(i)
-                    #print(self.points)
-                    #print(len(self.points))
-                else: 
-                    i += 2
-            j += 2"""
-        j = 0
         i = 0
-        print(len(self.points))
-        #cv.drawContours(img3, self.points, -1 , (0, 255, 0), 2)
-        aux=np.array(self.points).reshape(-1,2)
-        print(len(aux))
-        
-        
-            
+        aux=np.array(self.points).reshape(-1,2)       
+
         for i in range(len(aux)):
             x = aux[i][0]
             y = aux[i][1]
             string = str(x) + " " + str(y) + " " + str(i)
                 # text on remaining co-ordinates.
             cv.putText(img3, string, (x, y), 
-                    font, 1, (255, 0, 0)) 
+                    font, 1, (255, 0, 0)) """
+
+        #------------------------pra cima-----------------------
+        aux=np.array(self.points).reshape(-1,2)       
+
+        for i in range(len(aux)):
+            x = aux[i][0]
+            y = aux[i][1]
+            string = str(x) + " " + str(y) + " " + str(i)
+                # text on remaining co-ordinates.
+            cv.putText(img3, string, (x, y), 
+                    font, 1, (255, 0, 0))
+        cv.polylines(img3, [aux] , False, (0,255,0), 2)
+        #cv.polylines(img3, [self.points[1].reshape(-1,2)] , False, (0,0,255), 2)
+        #cv.polylines(img3, [self.points[2].reshape(-1,2)] , False, (255,0,0), 2)
         
             
         """for i in range(0,self.n_points[0],2):
@@ -85,11 +101,9 @@ class PATH:
                         self.n_points[j]-=1
                         print(self.points[j])
                         #self.n_points[j]-=2
-           """
-        image = cv.polylines(img3, [aux],
-                      False, (0,255,0), 2)
-        #cv.drawContours(img3, self.points, 1, (255, 0, 0), 2)
-        #cv.drawContours(img3, self.points, 2, (0, 0, 255), 2)      
+        """
+        #image = cv.polylines(img3, [aux], False, (0,255,0), 2)
+            
         # String containing the co-ordinates.
         
         plt.imshow(img3)
@@ -106,12 +120,6 @@ class PATH:
         ret, thresh = cv.threshold(imgray, 127, 255,cv.THRESH_BINARY_INV)
         
         contours, hierarchy = cv.findContours(thresh, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
-        #contours2, hierarchy = cv.findContours(thresh, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
-        """if len(contours2)>1:
-            print(contours1)
-            contours1.ravel(contours2[1])"""
-        #bmp = potrace.Bitmap(im1)
-        #print(bmp.)    
         
         aux = []
         self.n_points = []
@@ -119,7 +127,7 @@ class PATH:
         for cnt in contours :
   
             approx = cv.approxPolyDP(cnt, 0.0009*cv.arcLength(cnt, True), True)
-            # draws boundary of contours.
+            # draws boundary of contours 
             cv.drawContours(img2, [approx], -1, (0, 255, 0), 2) 
             # Used to flatted the array containing
             # the co-ordinates of the vertices.
@@ -148,9 +156,12 @@ class PATH:
                 
                 i = i + 1
         #self.points=aux
+
+        #------------tirar o comment pq rresolve para um contour
         for sublist in aux:
             for item in sublist:
                 self.points.append(item)
+        # ---------até aqui
 
         # Showing the final image.
         plt.imshow(img2)
@@ -190,8 +201,8 @@ class PATH:
 #potrace.potrace.CornerSegment
 
 path = PATH()
-path.load_paths_png("images/test_draw_1.png")
-path.removepoints("images/test_draw_1.png")
+path.load_paths_png("images/test_draw_2.png")
+path.removepoints("images/test_draw_2.png")
 #path.generate_arm_positions()
 """ for path in path.paths:
     for segment in path:
