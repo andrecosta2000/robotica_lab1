@@ -16,36 +16,46 @@ class PATH:
         self.paths = None
         self.points: list = []
 
-    def remove_point_contour(self, n):
-        j=i=0
-        #i=0
-        while (j < int(self.n_points[n]) ):
-                while (i < int(self.n_points[n]) ):
-                    distance = math.sqrt((self.points[j]-self.points[i])**2 + (self.points[j+1]-self.points[i+1])**2)
-                    if distance < 35:
-                        print(distance, self.points[j], self.points[j+1], self.points[i], self.points[i+1])
-                        counter=i
-                        print(counter)
-                        self.points.pop(i)
-                        self.points.pop(i)
-                        self.n_points[n]-=2
-                    i += 2
-                j+=2
-                i=j+2
-        #print(self.points)
-        self.points=self.points[:counter]
+    def remove_point_contour(self):
+        j=0
+        i=2
+        counter =[]
+        self.points[0]=self.points[0].tolist()
+        final_iter=self.n_points[0]
 
+        print(type(self.points[0]))
+        while (j < final_iter ):
+            while (i < final_iter):
+                distance = math.sqrt((self.points[0][j]-self.points[0][i])**2 + (self.points[0][j+1]-self.points[0][i+1])**2)
+                if distance < 35:
+                    print(distance, self.points[0][j], self.points[0][j+1], self.points[0][i], self.points[0][i+1])
+                    counter=i
+                    print(counter)
+                    self.points[0].pop(i)
+                    self.points[0].pop(i)
+                    final_iter-=2
+                i += 2
+            j+=2
+            i=j+2
+        
+        self.points[0]=self.points[0][:counter]
+        print(self.points[0])
+        return counter
     def removepoints(self, file_name: str):
         font = cv.FONT_HERSHEY_COMPLEX
         img3 = cv.imread(file_name, cv.IMREAD_COLOR)
-        
-        j=0
-        i=2
-        counter=0
+        aux=[]
 
-        for n in range(len(self.n_points)):
-            self.remove_point_contour(n)
-       
+        counter=self.remove_point_contour()
+        #self.points[0].pop(0)
+        for i in range(len(self.n_points)):
+            self.points[i]=np.reshape(np.array(self.points[i]),(-1,2))
+            print((self.points[i]))
+
+            #self.points[i]=self.points[i].reshape(-1,2)      
+        #aux=(self.points[:counter])
+        #for n in range(1,len(self.n_points)):
+            #aux.append(self.points[int(self.n_points[n-1]):int(self.n_points[n])])
             #--------------Resolveu para um contorno-----------------------
         """if(len(self.n_points) == 1): #means that we only have one contour
             
@@ -77,16 +87,16 @@ class PATH:
                     font, 1, (255, 0, 0)) """
 
         #------------------------pra cima-----------------------
-        aux=np.array(self.points).reshape(-1,2)       
 
-        for i in range(len(aux)):
-            x = aux[i][0]
-            y = aux[i][1]
-            string = str(x) + " " + str(y) + " " + str(i)
-                # text on remaining co-ordinates.
-            cv.putText(img3, string, (x, y), 
-                    font, 1, (255, 0, 0))
-        cv.polylines(img3, [aux] , False, (0,255,0), 2)
+        for j in range(len(self.points)):
+            for i in range(len(self.points[j])):
+                x = self.points[j][i][0]
+                y = self.points[j][i][1]
+                string = str(x) + " " + str(y) + " " + str(i)
+                    # text on remaining co-ordinates.
+                cv.putText(img3, string, (x, y), 
+                        font, 1, (255, 0, 0))
+        cv.polylines(img3, self.points , False, (0,0,255), 2)
         #cv.polylines(img3, [self.points[1].reshape(-1,2)] , False, (0,0,255), 2)
         #cv.polylines(img3, [self.points[2].reshape(-1,2)] , False, (255,0,0), 2)
         
@@ -131,12 +141,10 @@ class PATH:
             cv.drawContours(img2, [approx], -1, (0, 255, 0), 2) 
             # Used to flatted the array containing
             # the co-ordinates of the vertices.
-            n = np.array(approx.ravel())
+            n = approx.ravel()
             i = 0
-            
             aux.append(n)
             self.n_points.append(len(n))
-            print(aux)
             for j in n :
                 if(i % 2 == 0):
                     x = n[i]
@@ -155,18 +163,23 @@ class PATH:
                                 font, 1, (0, 255, 0)) 
                 
                 i = i + 1
-        #self.points=aux
+        self.points=aux
 
         #------------tirar o comment pq rresolve para um contour
-        for sublist in aux:
+        """for sublist in aux:
             for item in sublist:
-                self.points.append(item)
+                self.points.append(item)"""
         # ---------até aqui
 
-        # Showing the final image.
         plt.imshow(img2)
         #print(self.points[0][0])
         plt.show()
+
+
+        self.removepoints("images/test_draw_2.png")
+
+        # Showing the final image.
+       
         
         
 
@@ -202,7 +215,6 @@ class PATH:
 
 path = PATH()
 path.load_paths_png("images/test_draw_2.png")
-path.removepoints("images/test_draw_2.png")
 #path.generate_arm_positions()
 """ for path in path.paths:
     for segment in path:
