@@ -8,7 +8,7 @@ print('###########################')
 print('###### Loading Image ######')
 print('###########################')
 drawing = PATH()
-drawing.load_paths_png('images/test_draw_2.png')
+pos_vec_array=drawing.load_paths_png('images/test_draw_1.png')
 
 print('############################')
 print('#### Initializing Robot ####')
@@ -28,12 +28,13 @@ print('###########################')
 scale=2
 max_points=5
 n_paths=2
-pos_vec_array = np.zeros([n_paths,max_points,3])
+
+"""pos_vec_array = np.zeros([n_paths,max_points,3])
 pos_vec_array[0][0]=[4000, 1000, 0]
 pos_vec_array[0][1]=[4500, 1500, 0]
 pos_vec_array[0][2]=[4000, 1000, 0]
 pos_vec_array[0][3]=[4500, 1500, 0]
-pos_vec_array[0][4]=[4000, 1000, 0]
+pos_vec_array[0][4]=[4000, 1000, 0]"""
 for path in pos_vec_array:
     for point in path:
         point[0]=point[0]*scale+robot.origin[0]

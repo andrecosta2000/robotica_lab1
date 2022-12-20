@@ -121,17 +121,13 @@ class PATH:
                 i = i + 1
         #self.points=aux
 
-        #------------tirar o comment pq rresolve para um contour
-        """for sublist in aux:
-            for item in sublist:
-                self.points.append(item)"""
-        # ---------até aqui
-
         plt.imshow(img2)
         plt.show()
 
 
-        self.removepoints("images/test_draw_2.png")
+        self.removepoints("images/test_draw_1.png")
+        print(self.points)
+        return self.points
 
     def load_paths_svg(self, file_name: str):
         """Loads paths from <file_name>.svg image"""
@@ -142,7 +138,8 @@ class PATH:
         positions=1
         n_paths=self.paths.__sizeof__()
         i=0
-        for path in self.paths:
+        print("here")
+        """for path in self.paths:
             i=i+1
             #print(path)
             for segment in path:
@@ -155,7 +152,7 @@ class PATH:
                     print('-> CornerSegment')
                     print(segment.c.x, '\t', segment.c.x)
                     print(segment.end_point.x, '\t', segment.end_point.y)
-                """ print('(', segment.start.real, ' , ', segment.start.imag,')', 
+                    print('(', segment.start.real, ' , ', segment.start.imag,')', 
                     '->', '(', segment.end.real, ' , ', segment.end.imag,')') """
         return positions, n_paths
 
@@ -163,7 +160,7 @@ class PATH:
 #potrace.potrace.CornerSegment
 
 path = PATH()
-path.load_paths_png("images/test_draw_2.png")
+path.load_paths_png("images/test_draw_1.png")
 #path.generate_arm_positions()
 """ for path in path.paths:
     for segment in path:
