@@ -36,7 +36,6 @@ class PATH:
         
         self.points[0]=self.points[0][:counter]
        
-
     def removepoints(self, file_name: str):
         font = cv.FONT_HERSHEY_COMPLEX
         img3 = cv.imread(file_name, cv.IMREAD_COLOR)
@@ -134,10 +133,10 @@ class PATH:
 
         self.removepoints("images/test_draw_2.png")
 
-    
     def load_paths_svg(self, file_name: str):
         """Loads paths from <file_name>.svg image"""
         #self.paths, attribute_dictionary_list = svgpathtools.svg2paths(file_name)
+
     def generate_arm_positions(self):
         """Generate arm positions for m paths with varying #positions [[[pos_1x1]...[pos_1xk]]...[[pos_mx1]...[pos_mxb]]]"""
         positions=1
