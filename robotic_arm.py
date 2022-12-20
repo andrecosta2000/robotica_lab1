@@ -64,7 +64,7 @@ class RoboticArm:
     def set_origin(self) -> None:
         """Defines drawing plane from 3 points"""
 
-        input('Move to Origin and press [Enter]')
+        """ input('Move to Origin and press [Enter]')
         self.load_current_position()
         self.origin[0] = self.current_position[0]
         self.origin[1] = self.current_position[1]
@@ -87,21 +87,22 @@ class RoboticArm:
         print(point2)
         print(point3)
         print('######################')
-        print('######################')
-        """ self.origin[0]=1000
-        self.origin[1]=300
-        self.origin[2]=-200
+        print('######################') """
+
+        self.origin[0]=4399
+        self.origin[1]=-1695
+        self.origin[2]=-657
 
         point2=np.zeros(3)
-        point2[0]=2000
-        point2[1]=300
-        point2[2]=-200
+        point2[0]=5321
+        point2[1]=-1803
+        point2[2]=-668
 
         point3=np.zeros(3)
-        point3[0]=2000
-        point3[1]=1000
-        point3[2]=-300 """
-
+        point3[0]=5031
+        point3[1]=371
+        point3[2]=-661
+    
         ab=point2-self.origin
         ac=point3-self.origin
         self.normal_vector=np.cross(ab,ac)
@@ -116,6 +117,7 @@ class RoboticArm:
         time.sleep(0.5)
 
     def move_pos_vec(self, name: str, pos_vec: np.array(np.array)):
+        print('moves '+name+' '+str(1)+' '+str(pos_vec.shape[0])+'\r')
         self.com_port.write('moves '+name+' '+str(1)+' '+str(pos_vec.shape[0])+'\r')
         time.sleep(0.5)
 
@@ -140,18 +142,31 @@ class RoboticArm:
         #print('dimp '+name+'['+str(pos_vec.shape[0])+']'+'\r')
         self.com_port.write('dimp '+name+'['+str(pos_vec.shape[0])+']'+'\r')
         time.sleep(0.5)
+        print('dimp '+name+'['+str(pos_vec.shape[0])+']'+'\r')
         for i in range(1, pos_vec.shape[0]+1):
-            #print('here '+name+'['+str(i)+']'+'\r')
+            print('here '+name+'['+str(i)+']'+'\r')
             #self.create_pos(name+'['+str(i)+']', pos_vec[i-1][0],pos_vec[i-1][1],pos_vec[i-1][2])
             self.com_port.write('here '+name+'['+str(i)+']'+'\r')
             time.sleep(0.5)
-            self.com_port.write('SETPVc '+name+'['+str(i)+']'+' x '+str(int(pos_vec[i-1][0]))+'\r')
-            time.sleep(0.5)
-            self.com_port.write('SETPVc '+name+'['+str(i)+']'+' y '+str(int(pos_vec[i-1][1]))+'\r')
-            time.sleep(0.5)
-            self.com_port.write('SETPVc '+name+'['+str(i)+']'+' z '+str(int(pos_vec[i-1][2]))+'\r')
-            time.sleep(0.5)
-            self.com_port.read_and_wait(1)
+            if pos_vec[i-1][0] == 0:
+                self.com_port.write('SETPVc '+name+'['+str(i)+']'+' x '+str(int(self.origin[0]))+'\r')
+                time.sleep(0.25)
+                self.com_port.write('SETPVc '+name+'['+str(i)+']'+' y '+str(int(self.origin[1]))+'\r')
+                time.sleep(0.25)
+                self.com_port.write('SETPVc '+name+'['+str(i)+']'+' z '+str(int(self.origin[2]+200))+'\r')
+                time.sleep(0.25)
+                self.com_port.read_and_wait(1)
+            else:
+                self.com_port.write('SETPVc '+name+'['+str(i)+']'+' x '+str(int(pos_vec[i-1][0]))+'\r')
+                print('SETPVc '+name+'['+str(i)+']'+' x '+str(int(pos_vec[i-1][0]))+'\r')
+                time.sleep(0.25)
+                self.com_port.write('SETPVc '+name+'['+str(i)+']'+' y '+str(int(pos_vec[i-1][1]))+'\r')
+                print('SETPVc '+name+'['+str(i)+']'+' y '+str(int(pos_vec[i-1][1]))+'\r')
+                time.sleep(0.25)
+                self.com_port.write('SETPVc '+name+'['+str(i)+']'+' z '+str(int(pos_vec[i-1][2]))+'\r')
+                print('SETPVc '+name+'['+str(i)+']'+' z '+str(int(pos_vec[i-1][2]))+'\r')
+                time.sleep(0.25)
+                self.com_port.read_and_wait(1)
             
         #self.com_port.write('dimp '+name+'['+pos_vec.shape[0]+']'+'\r')
         
