@@ -47,12 +47,12 @@ class PATH:
                         flag=True
                         print(first)
                         
-            if(last == 0 & first==0): 
+            if(last == 0 and first==0): 
                 self.points[j]=self.points[j]
             elif last!=0:
                 self.points[j]=self.points[j][first:last]
             else:
-                self.points[j]=self.points[j][first:]
+                self.points[j]=self.points[j][:first+1]
 
 
             '''while (j < final_iter ):
@@ -169,6 +169,6 @@ class PATH:
 
 
 path=PATH()
-path.load_paths_png('images/test_draw_1.png')
+path.load_paths_png('images/test_draw_1_r.png')
 
 
