@@ -1,85 +1,174 @@
 #Authors:
 #Joca
+#Ricardo
 
-#import svgpathtools
-#import potrace
-import cv2
+
+import cv2 as cv
 import matplotlib.pyplot as plt
+import math
+import numpy as np
+from shapely.geometry import Polygon, Point, LineString
 
 class PATH:
     def __init__(self) -> None:
         self.n_paths: int = 0
         self.paths = None
+        self.points: list = []
 
-    ### loads file
+    def remove_point_contour_ext(self):
+        j=0
+        i=2
+        n=0
+
+        #while n < (len(self.points)):
+        #   self.points[n]=self.points[n].tolist()
+        #final_iter=len(self.points[n])
+        counter=0
+        #i=2
+        #j=0
+        aux=[]
+        k=0
+        flag=False
+        print(self.points)
+        for j in range(len(self.points)):
+            first=0
+            last=0
+            for i in range(len(self.points[j])-2):
+                dis1=math.dist(self.points[j][i], self.points[j][i+1])
+                dis2=math.dist(self.points[j][i], self.points[j][i+2])
+                
+                if(flag):
+                    if(int(dis2) < 35 and dis2<dis1):
+                        last=i+2
+                        print(self.points[j][i], self.points[j][i+1])
+                else:
+                    if(int(dis2)< 35 and dis2<dis1):
+                        first=i+1
+                        flag=True
+                        print(first)
+                        
+            if(last == 0 & first==0): 
+                self.points[j]=self.points[j]
+            elif last!=0:
+                self.points[j]=self.points[j][first:last]
+            else:
+                self.points[j]=self.points[j][first:]
+
+
+            '''while (j < final_iter ):
+                while (i < final_iter):
+                    distance = math.sqrt((self.points[n][j]-self.points[n][i])**2 + (self.points[n][j+1]-self.points[n][i+1])**2)
+                    if distance < 35: #we choose this threshold since it gave the best results
+                        counter=i
+                        self.points[n].pop(i)
+                        self.points[n].pop(i)
+                        final_iter-=2
+                    i += 2
+                j+=2
+                i=j+2
+            
+            if counter !=0:
+                self.points[n]=self.points[n][:counter]
+            print(len(self.points[n]))
+            print(self.points[n],n)
+            n+=1'''
+        
+        
+    
+    def reorder_contour(self):
+        modified_contours = []
+        for i in range(len(self.points)):
+            c1 = Polygon(self.points[i])
+            c1=c1.buffer(0)
+            for j in range(i+1, len(self.points)):
+                c2 = Polygon(self.points[j])
+                c2=c2.buffer(0)
+                common = c1.intersection(c2)
+                if common.area > 0:  # There are common points between the contours
+                    c1 = c1.difference(common)
+                    c2 = c2.difference(common)
+                    modified_contours.append(list(c1.exterior.coords))
+                    modified_contours.append(list(c2.exterior.coords))
+        modified_contours += [c for c in self.points if c not in modified_contours]
+        self.points=modified_contours
+       
+    def removepoints(self, file_name: str):
+        font = cv.FONT_HERSHEY_COMPLEX
+        img3 = cv.imread(file_name, cv.IMREAD_COLOR)
+
+
+        for i in range(len(self.points)):
+            self.points[i]=np.reshape(np.array(self.points[i]),(-1,2))
+
+        self.remove_point_contour_ext() #removes the points that are similar on the external contour
+
+        #if(len(self.points)>1):
+            #self.reorder_contour()
+        
+            
+
+        
+
+
+        num=0
+        
+        print(self.points)
+        #---para escrever os pontos na imagem
+        for j in range(len(self.points)):
+            for i in range(len(self.points[j])):
+                x = self.points[j][i][0]
+                y = self.points[j][i][1]
+                string = str(x) + " " + str(y) + " " + str(num)
+                    # text on remaining co-ordinates.
+                if( j==0):
+                    cv.putText(img3, string, (x, y), 
+                        font, 1, (255, 0, 0))
+                elif j==1 :
+                    cv.putText(img3, string, (x, y), 
+                        font, 1, (0, 0, 255))
+                else:
+                    cv.putText(img3, string, (x, y), 
+                        font, 1, (0, 255, 0))
+                num += 1
+        
+        cv.polylines(img3, self.points , False, (0,0,255), 2)
+       
+            
+        # String containing the co-ordinates.
+        
+        plt.imshow(img3)
+        plt.show()
+
     def load_paths_png(self, file_name: str):
         """Loads paths from <file_name>.png image"""
-        font = cv2.FONT_HERSHEY_COMPLEX
-        im1 = cv2.imread(file_name)
-        imgray = cv2.cvtColor(im1, cv2.COLOR_BGR2GRAY)
-        ret, thresh = cv2.threshold(imgray, 127, 255, cv2.THRESH_BINARY)
-        contours, hierarchy = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-        for i in contours:
-            approx = cv2.approxPolyDP(i,0.009*cv2.arcLength(i,True),True)
-            cv2.drawContours(imgray,[approx],0,(0,0,255),5)
-            n=approx.ravel()
-            k=0
-            for j in n:
-                if(k%2==0):
-                    x = n[k]
-                    y = n[k+1]
-                    print(x,y)
-                    string=str(x)+""+str(y)
-                    if(k==0):
-                        cv2.putText(imgray,"Arrow tip",(x,y),font,0.5,(255,0,0))
-                    else:
-                        cv2.putText(imgray,string,(x,y),font,0.5,(0,255,0))
-                k=k+1
-            cv2.imshow('image2',imgray)
-            if cv2.waitKey(0) & 0xFF ==ord('q'):
-                cv2.destroyAllWindows()
-
-                            #im2= cv2.drawContours(im1, contours, -1, (0,255,0), 0)
-        #plt.imshow(im2)
-        #plt.show()
-        #bmp = potrace.Bitmap(im1)
-        #print(bmp.)
+        im1 = cv.imread(file_name)
+        font = cv.FONT_HERSHEY_COMPLEX
+        imgray = cv.cvtColor(im1, cv.COLOR_BGR2GRAY)
+        imgray = cv.GaussianBlur(imgray, (5, 5), 0)
+        img2 = cv.imread(file_name, cv.IMREAD_COLOR)
+        ret, thresh = cv.threshold(imgray, 127, 255,cv.THRESH_BINARY_INV)
         
-        self.paths = bmp.trace()
-    
-    def load_paths_svg(self, file_name: str):
-        """Loads paths from <file_name>.svg image"""
-        self.paths, attribute_dictionary_list = svgpathtools.svg2paths(file_name)
-    def generate_arm_positions(self):
-        """Generate arm positions for m paths with varying #positions [[[pos_1x1]...[pos_1xk]]...[[pos_mx1]...[pos_mxb]]]"""
-        positions=1
-        n_paths=self.paths.__sizeof__()
-        i=0
-        for path in self.paths:
-            i=i+1
-            #print(path)
-            for segment in path:
-                if isinstance(segment, potrace.BezierSegment):
-                    print('-> BezierSegment')
-                    print(segment.c1.x, '\t', segment.c1.x)
-                    print(segment.c2.x, '\t', segment.c2.y)
-                    print(segment.end_point.x, '\t',  segment.end_point.y)
-                if isinstance(segment, potrace.CornerSegment):
-                    print('-> CornerSegment')
-                    print(segment.c.x, '\t', segment.c.x)
-                    print(segment.end_point.x, '\t', segment.end_point.y)
-                """ print('(', segment.start.real, ' , ', segment.start.imag,')', 
-                    '->', '(', segment.end.real, ' , ', segment.end.imag,')') """
-        return positions, n_paths
+        contours, hierarchy = cv.findContours(thresh, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
+
+        for cnt in contours :
+  
+            approx = cv.approxPolyDP(cnt, 0.0009*cv.arcLength(cnt, True), True)
+            # draws boundary of contours 
+            cv.drawContours(img2, [approx], -1, (0, 255, 0), 2) 
+            # Used to flatted the array containing
+            # the co-ordinates of the vertices.
+            n = approx.ravel()
+            self.points.append(n)
+            
+
+        plt.imshow(img2)
+        plt.show()
 
 
-#potrace.potrace.CornerSegment
+        self.removepoints(file_name)
 
-path = PATH()
-path.load_paths_png("images/test_draw_1.png")
-path.generate_arm_positions()
-""" for path in path.paths:
-    for segment in path:
-        print(segment)
-        print('(', segment.start.real, ' , ', segment.start.imag,')', '->', '(', 
-            segment.end.real, ' , ', segment.end.imag,')') """
+
+path=PATH()
+path.load_paths_png('images/test_draw_1.png')
+
+
