@@ -1,0 +1,167 @@
+#Authors:
+#Joca
+#Ricardo
+
+
+import cv2 as cv
+import matplotlib.pyplot as plt
+import math
+import numpy as np
+from shapely.geometry import Polygon, Point, LineString
+
+class PATH:
+    def __init__(self) -> None:
+        self.n_paths: int = 0
+        self.paths = None
+        self.points: list = []
+
+    def remove_point_contour_ext(self):
+        j=0
+        i=2
+        n=0
+
+        #while n < (len(self.points)):
+        #   self.points[n]=self.points[n].tolist()
+        #final_iter=len(self.points[n])
+        counter=0
+        #i=2
+        #j=0
+        aux=[]
+        last=0
+        first=0
+        k=0
+        flag=bool
+        for j in range(len(self.points)):
+
+            for i in range(len(self.points[j])-2):
+                dis1=math.dist(self.points[j][i], self.points[j][i+1])
+                dis2=math.dist(self.points[j][i], self.points[j][i+2])
+
+                if(flag):
+                    if(dis2<dis1):
+                        last=i+1
+                        k+=1
+                
+                self.points[j]=self.points[first:last]
+
+
+
+            '''while (j < final_iter ):
+                while (i < final_iter):
+                    distance = math.sqrt((self.points[n][j]-self.points[n][i])**2 + (self.points[n][j+1]-self.points[n][i+1])**2)
+                    if distance < 35: #we choose this threshold since it gave the best results
+                        counter=i
+                        self.points[n].pop(i)
+                        self.points[n].pop(i)
+                        final_iter-=2
+                    i += 2
+                j+=2
+                i=j+2
+            
+            if counter !=0:
+                self.points[n]=self.points[n][:counter]
+            print(len(self.points[n]))
+            print(self.points[n],n)
+            n+=1'''
+        
+        
+    
+    def reorder_contour(self):
+        modified_contours = []
+        for i in range(len(self.points)):
+            c1 = Polygon(self.points[i])
+            c1=c1.buffer(0)
+            for j in range(i+1, len(self.points)):
+                c2 = Polygon(self.points[j])
+                c2=c2.buffer(0)
+                common = c1.intersection(c2)
+                if common.area > 0:  # There are common points between the contours
+                    c1 = c1.difference(common)
+                    c2 = c2.difference(common)
+                    modified_contours.append(list(c1.exterior.coords))
+                    modified_contours.append(list(c2.exterior.coords))
+        modified_contours += [c for c in self.points if c not in modified_contours]
+        self.points=modified_contours
+       
+    def removepoints(self, file_name: str):
+        font = cv.FONT_HERSHEY_COMPLEX
+        img3 = cv.imread(file_name, cv.IMREAD_COLOR)
+
+
+        for i in range(len(self.points)):
+            self.points[i]=np.reshape(np.array(self.points[i]),(-1,2))
+
+        self.remove_point_contour_ext() #removes the points that are similar on the external contour
+
+        #if(len(self.points)>1):
+            #self.reorder_contour()
+        
+            
+
+        
+
+
+        num=0
+        
+
+        #---para escrever os pontos na imagem
+        for j in range(len(self.points)):
+            print(len(self.points[j]))
+            for i in range(len(self.points[j])):
+                x = self.points[j][i][0]
+                y = self.points[j][i][1]
+                string = str(x) + " " + str(y) + " " + str(num)
+                    # text on remaining co-ordinates.
+                """if( j==0):
+                    cv.putText(img3, string, (x, y), 
+                        font, 1, (255, 0, 0))
+                elif j==1 :
+                    cv.putText(img3, string, (x, y), 
+                        font, 1, (0, 0, 255))
+                else:
+                    cv.putText(img3, string, (x, y), 
+                        font, 1, (0, 255, 0))
+                num += 1"""
+        print(self.points)
+        cv.polylines(img3, self.points , False, (0,0,255), 2)
+       
+            
+        # String containing the co-ordinates.
+        
+        plt.imshow(img3)
+        plt.show()
+
+    def load_paths_png(self, file_name: str):
+        """Loads paths from <file_name>.png image"""
+        im1 = cv.imread(file_name)
+        font = cv.FONT_HERSHEY_COMPLEX
+        imgray = cv.cvtColor(im1, cv.COLOR_BGR2GRAY)
+        imgray = cv.GaussianBlur(imgray, (5, 5), 0)
+        img2 = cv.imread(file_name, cv.IMREAD_COLOR)
+        ret, thresh = cv.threshold(imgray, 127, 255,cv.THRESH_BINARY_INV)
+        
+        contours, hierarchy = cv.findContours(thresh, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
+        print(hierarchy)
+
+        for cnt in contours :
+  
+            approx = cv.approxPolyDP(cnt, 0.001*cv.arcLength(cnt, True), True)
+            # draws boundary of contours 
+            cv.drawContours(img2, [approx], -1, (0, 255, 0), 2) 
+            # Used to flatted the array containing
+            # the co-ordinates of the vertices.
+            n = approx.ravel()
+            self.points.append(n)
+            
+
+        plt.imshow(img2)
+        plt.show()
+
+
+        self.removepoints(file_name)
+
+
+path=PATH()
+path.load_paths_png('images/test_draw_2.png')
+
+
