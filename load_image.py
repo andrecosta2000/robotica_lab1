@@ -15,14 +15,66 @@ class PATH:
         self.paths = None
         self.points: list = []
 
+    def remove_duplicate_lines(self):
+        #Guarda os novos contornos
+        unique_contours = []
+        #Corro os 3 contornos
+        
+        for contour1 in self.points:
+            #Guarda os pontos que so existem num contorno
+            print("Contour1", contour1)
+            unique_points = set()
+            #Vou comparar os contornos para ver se é o mesmo
+            for contour2 in self.points:
+                if contour1.all()==contour2.all():
+                    continue
+            #Vou buscar 
+            for point in contour2:
+                print(contour2)
+                if point not in unique_points:
+                    unique_points.add(point)
+            
+                for point in contour1:
+                    if point not in unique_points:
+                        unique_points.add(point)
+                contour_unique = np.array(list(unique_points))
+                unique_contours.append(contour_unique) 
+        print("Esta a correr a função")
+        self.point = unique_contours
+        # ##############################################2ºFunção(nao funciona) 
+    def remove_duplicate_lines(self):
+        unique_contours=[]
+        aux=[]
+
+        for idx in range(len(self.points)):
+        # Check the hierarchy of the contour
+            if self.hierarchy[0][idx][2] < 0:
+            # The contour is not a duplicate, so add it to the list of unique contours
+                unique_contours.append(self.points[idx])
+            else:
+                aux.append(self.points[idx])
+        
+        for n in range(len(aux)):
+            initial_p=aux[n][0]
+            final_p=aux[n][len(aux[n])-1]
+            print(initial_p, final_p)
+            for i, point in enumerate(unique_contours):
+                print(i,point)
+                dist1=math.dist(initial_p,point[0])
+                dist2=math.dist(final_p,point[len(point)-1])
+                #if(dist1<35): #means that the contour starts at the first point of the parent contour
+                    #find
+                #if(dist2<35): #means that the contour starts at the last point of the parent contour
+
+        self.points=unique_contours
+
     def remove_point_contour_ext(self):
         j=0
         i=2
-        n=0
 
         aux=np.zeros([len(self.points),2])
-        print(aux)
         flag=False
+
         for j in range(len(self.points)):
             first=0
             last=0
@@ -49,25 +101,8 @@ class PATH:
             aux[j][0]=first
             aux[j][1]=last
         
+        self.remove_duplicate_lines()
         
-        
-    
-    def reorder_contour(self):
-        modified_contours = []
-        for i in range(len(self.points)):
-            c1 = Polygon(self.points[i])
-            c1=c1.buffer(0)
-            for j in range(i+1, len(self.points)):
-                c2 = Polygon(self.points[j])
-                c2=c2.buffer(0)
-                common = c1.intersection(c2)
-                if common.area > 0:  # There are common points between the contours
-                    c1 = c1.difference(common)
-                    c2 = c2.difference(common)
-                    modified_contours.append(list(c1.exterior.coords))
-                    modified_contours.append(list(c2.exterior.coords))
-        modified_contours += [c for c in self.points if c not in modified_contours]
-        self.points=modified_contours
        
     def removepoints(self, file_name: str):
         font = cv.FONT_HERSHEY_COMPLEX
@@ -84,9 +119,7 @@ class PATH:
 
 
         num=0
-        
-        print(self.points)
-        #---para escrever os pontos na imagem
+         #---para escrever os pontos na imagem
         for j in range(len(self.points)):
             for i in range(len(self.points[j])):
                 x = self.points[j][i][0]
@@ -122,6 +155,7 @@ class PATH:
         ret, thresh = cv.threshold(imgray, 127, 255,cv.THRESH_BINARY_INV)
         
         contours, hierarchy = cv.findContours(thresh, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
+        self.hierarchy=hierarchy
 
         for cnt in contours :
   
@@ -134,8 +168,8 @@ class PATH:
             self.points.append(n)
             
 
-        plt.imshow(img2)
-        plt.show()
+        #plt.imshow(img2)
+        #plt.show()
 
 
         self.removepoints(file_name)
