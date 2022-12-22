@@ -20,7 +20,7 @@ class PATH:
         unique_contours = []
         #Corro os 3 contornos
         
-        for contour1 in self.points:
+        '''for contour1 in self.points:
             #Guarda os pontos que so existem num contorno
             print("Contour1", contour1)
             unique_points = set()
@@ -40,20 +40,54 @@ class PATH:
                 contour_unique = np.array(list(unique_points))
                 unique_contours.append(contour_unique) 
         print("Esta a correr a função")
-        self.point = unique_contours
-        # ##############################################2ºFunção(nao funciona) 
+        self.point = unique_contours'''
+        # ##############################################2ºFunção(nao funciona)
+    
+    
     def remove_duplicate_lines(self):
         unique_contours=[]
         aux=[]
+        flag=False
 
-        for idx in range(len(self.points)):
+        """for idx in range(len(self.points)):
         # Check the hierarchy of the contour
-            if self.hierarchy[0][idx][2] < 0:
-            # The contour is not a duplicate, so add it to the list of unique contours
-                unique_contours.append(self.points[idx])
+            if self.hierarchy[0][idx][2] < 0: #
+                iter
             else:
-                aux.append(self.points[idx])
+                aux.append(idx)"""
+
+        for i in range(len(self.points[0])):
+            for j in range(1,len(self.points[1:])):
+                for idx,_ in enumerate(self.points[j]):
+                    if (math.dist(self.points[0][i],self.points[j][idx]) < 100):
+                        aux=self.points[0][i:]
+
+        self.points[0]=aux
+
+
+        """
+        for a1 in self.points[0:1]:
+            for a2 in self.points[1:2]:
+                for point1 in a1:
+                    if math.dist(point1[0],a2[0][0]) < 100 and flag == False:
+                        flag= True
+                        for point2 in a2:
+                            unique_contours.append(point2[0])
+                    unique_contours.append(point1[0])"""
+        #for i in
+        """
         
+        loop=0
+
+
+        
+                if(flag):
+                    continue
+                else:
+                    self.points[loop]=self.points[loop][idx:]
+                    break 
+            
+
         for n in range(len(aux)):
             initial_p=aux[n][0]
             final_p=aux[n][len(aux[n])-1]
@@ -62,19 +96,23 @@ class PATH:
                 print(i,point)
                 dist1=math.dist(initial_p,point[0])
                 dist2=math.dist(final_p,point[len(point)-1])
-                #if(dist1<35): #means that the contour starts at the first point of the parent contour
-                    #find
+
+                #(dist1<35): #means that the contour starts at the first point of the parent contour
+                    
                 #if(dist2<35): #means that the contour starts at the last point of the parent contour
 
-        self.points=unique_contours
+        # Invert the child contour
+        
+
+        # Keep the points of the parent contour that aren't in the child contour"""
+        
+
 
     def remove_point_contour_ext(self):
         j=0
         i=2
-
-        aux=np.zeros([len(self.points),2])
         flag=False
-
+    
         for j in range(len(self.points)):
             first=0
             last=0
@@ -98,9 +136,8 @@ class PATH:
             else:
                 last=first+1
                 self.points[j]=self.points[j][:last]
-            aux[j][0]=first
-            aux[j][1]=last
         
+
         self.remove_duplicate_lines()
         
        
@@ -119,6 +156,7 @@ class PATH:
 
 
         num=0
+        print(self.points)
          #---para escrever os pontos na imagem
         for j in range(len(self.points)):
             for i in range(len(self.points[j])):
