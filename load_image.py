@@ -20,16 +20,9 @@ class PATH:
         i=2
         n=0
 
-        #while n < (len(self.points)):
-        #   self.points[n]=self.points[n].tolist()
-        #final_iter=len(self.points[n])
-        counter=0
-        #i=2
-        #j=0
-        aux=[]
-        k=0
+        aux=np.zeros([len(self.points),2])
+        print(aux)
         flag=False
-        print(self.points)
         for j in range(len(self.points)):
             first=0
             last=0
@@ -39,39 +32,23 @@ class PATH:
                 
                 if(flag):
                     if(int(dis2) < 35 and dis2<dis1):
-                        last=i+2
-                        print(self.points[j][i], self.points[j][i+1])
+                        last=i+2 #it should be plus 1 however when doing, i.e, points[:last] it would not have in consideration the last value
                 else:
                     if(int(dis2)< 35 and dis2<dis1):
                         first=i+1
                         flag=True
-                        print(first)
                         
             if(last == 0 and first==0): 
                 self.points[j]=self.points[j]
+                last=len(self.points[j])
             elif last!=0:
                 self.points[j]=self.points[j][first:last]
             else:
-                self.points[j]=self.points[j][:first+1]
-
-
-            '''while (j < final_iter ):
-                while (i < final_iter):
-                    distance = math.sqrt((self.points[n][j]-self.points[n][i])**2 + (self.points[n][j+1]-self.points[n][i+1])**2)
-                    if distance < 35: #we choose this threshold since it gave the best results
-                        counter=i
-                        self.points[n].pop(i)
-                        self.points[n].pop(i)
-                        final_iter-=2
-                    i += 2
-                j+=2
-                i=j+2
-            
-            if counter !=0:
-                self.points[n]=self.points[n][:counter]
-            print(len(self.points[n]))
-            print(self.points[n],n)
-            n+=1'''
+                last=first+1
+                self.points[j]=self.points[j][:last]
+            aux[j][0]=first
+            aux[j][1]=last
+        
         
         
     
@@ -104,10 +81,6 @@ class PATH:
 
         #if(len(self.points)>1):
             #self.reorder_contour()
-        
-            
-
-        
 
 
         num=0
@@ -169,6 +142,6 @@ class PATH:
 
 
 path=PATH()
-path.load_paths_png('images/test_draw_1_r.png')
+path.load_paths_png('images/test_draw_2.png')
 
 
