@@ -8,7 +8,7 @@ print('###########################')
 print('###### Loading Image ######')
 print('###########################')
 drawing = PATH()
-drawing.load_paths_png('images/test_draw_2.png')
+drawing.load_paths_png('images/test_draw_1.png')
 
 print('############################')
 print('#### Initializing Robot ####')
