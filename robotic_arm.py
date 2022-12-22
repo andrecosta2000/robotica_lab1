@@ -65,7 +65,7 @@ class RoboticArm:
     def set_origin(self) -> None:
         """Defines drawing plane from 3 points"""
 
-        """ input('Move to Origin and press [Enter]')
+        input('Move to Origin and press [Enter]')
         self.load_current_position()
         self.origin[0] = self.current_position[0]
         self.origin[1] = self.current_position[1]
@@ -81,22 +81,22 @@ class RoboticArm:
         point3=np.zeros(3)
         point3[0]=self.current_position[0]
         point3[1]=self.current_position[1]
-        point3[2]=self.current_position[2] """
+        point3[2]=self.current_position[2]
         self.load_current_position()
         self.com_port.write('delp t1\r')
         time.sleep(0.5)
         self.com_port.write('yes\r')
         time.sleep(0.5)
-        self.create_pos('t1',self.current_position[0], self.current_position[1], self.current_position[2]+300)
+        self.create_pos('t1',int(self.current_position[0]), int(self.current_position[1]), int(self.current_position[2]+300))
         self.move_pos('t1')
-        """ print('######################')
+        print('######################')
         print('######################')
         print(self.origin)
         print(point2)
         print(point3)
         print('######################')
-        print('######################') """
-        self.origin[0]=3963
+        print('######################')
+        """ self.origin[0]=3963
         self.origin[1]=-2254
         self.origin[2]=-873
         point2=np.zeros(3)
@@ -106,7 +106,7 @@ class RoboticArm:
         point3=np.zeros(3)
         point3[0]=4344
         point3[1]=-1383
-        point3[2]=-877
+        point3[2]=-877 """
 
         ab=point2-self.origin
         ac=point3-self.origin
