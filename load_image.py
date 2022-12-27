@@ -192,6 +192,7 @@ class PATH:
             # the co-ordinates of the vertices.
             n = approx.ravel()
             self.points.append(n)
+
         num=0
         for i in range(len(self.points)):
             self.points[i]=np.reshape(np.array(self.points[i]),(-1,2))
@@ -221,7 +222,7 @@ class PATH:
         self.removepoints(file_name)
 
 
-path=PATH()
-path.load_paths_png('images/test_draw_2.png')
+#path=PATH()
+#path.load_paths_png('images/test_draw_2.png')
 
 
