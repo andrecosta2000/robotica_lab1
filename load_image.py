@@ -15,33 +15,25 @@ class PATH:
         self.paths = None
         self.points: list = []
 
-    def remove_duplicate_lines(self):
-        #Guarda os novos contornos
-        unique_contours = []
-        #Corro os 3 contornos
+    def remove_point_contour(self):
+        j=0
+        i=2
+        counter = 0
+
+        print(len(self.points[0]))
+        while (j < len(self.points[0]) ):
+            while (i < len(self.points[0])):
+                distance = math.dist(self.points[0][j],self.points[0][i])
+                print("Counter",distance)
+                if distance <100:
+                    counter=i
+                    
+                i += 1
+            j+=1
+            i=j+1
         
-        '''for contour1 in self.points:
-            #Guarda os pontos que so existem num contorno
-            print("Contour1", contour1)
-            unique_points = set()
-            #Vou comparar os contornos para ver se é o mesmo
-            for contour2 in self.points:
-                if contour1.all()==contour2.all():
-                    continue
-            #Vou buscar 
-            for point in contour2:
-                print(contour2)
-                if point not in unique_points:
-                    unique_points.add(point)
-            
-                for point in contour1:
-                    if point not in unique_points:
-                        unique_points.add(point)
-                contour_unique = np.array(list(unique_points))
-                unique_contours.append(contour_unique) 
-        print("Esta a correr a função")
-        self.point = unique_contours'''
-        # ##############################################2ºFunção(nao funciona)
+        self.points[0]=self.points[0][:counter]
+        print(self.points[0])
     
     
     def remove_duplicate_lines(self):
@@ -49,12 +41,6 @@ class PATH:
         aux=[]
         flag=False
 
-        """for idx in range(len(self.points)):
-        # Check the hierarchy of the contour
-            if self.hierarchy[0][idx][2] < 0: #
-                iter
-            else:
-                aux.append(idx)"""
 
         for i in range(len(self.points[0])):
             for j in range(1,len(self.points[1:])):
@@ -111,8 +97,11 @@ class PATH:
     def remove_point_contour_ext(self):
         j=0
         i=2
+
         flag=False
-    
+        another = False
+
+        print(len(self.points[0]))
         for j in range(len(self.points)):
             first=0
             last=0
@@ -136,10 +125,10 @@ class PATH:
             else:
                 last=first+1
                 self.points[j]=self.points[j][:last]
-        
-
-        self.remove_duplicate_lines()
-        
+                print("Here2",last, j)
+        if(len(self.points)>1):
+            self.remove_duplicate_lines()
+        self.points.reverse()
        
     def removepoints(self, file_name: str):
         font = cv.FONT_HERSHEY_COMPLEX
@@ -156,7 +145,6 @@ class PATH:
 
 
         num=0
-        print(self.points)
          #---para escrever os pontos na imagem
         for j in range(len(self.points)):
             for i in range(len(self.points[j])):
@@ -198,16 +186,36 @@ class PATH:
         for cnt in contours :
   
             approx = cv.approxPolyDP(cnt, 0.0009*cv.arcLength(cnt, True), True)
-            # draws boundary of contours 
+            # draws boundary of contours
             cv.drawContours(img2, [approx], -1, (0, 255, 0), 2) 
             # Used to flatted the array containing
             # the co-ordinates of the vertices.
             n = approx.ravel()
             self.points.append(n)
-            
+        num=0
+        for i in range(len(self.points)):
+            self.points[i]=np.reshape(np.array(self.points[i]),(-1,2))
 
-        #plt.imshow(img2)
-        #plt.show()
+        for j in range(len(self.points)):
+            for i in range(len(self.points[j])):
+                x = self.points[j][i][0]
+                y = self.points[j][i][1]
+                string = str(x) + " " + str(y) + " " + str(num)
+                    # text on remaining co-ordinates.
+                if( j==0):
+                    cv.putText(img2, string, (x, y), 
+                        font, 1, (255, 0, 0))
+                elif j==1 :
+                    cv.putText(img2, string, (x, y), 
+                        font, 1, (0, 0, 255))
+                else:
+                    cv.putText(img2, string, (x, y), 
+                        font, 1, (0, 255, 0))
+                num += 1
+        
+
+        plt.imshow(img2)
+        plt.show()
 
 
         self.removepoints(file_name)
