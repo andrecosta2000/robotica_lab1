@@ -6,7 +6,6 @@ import numpy as np
 
 class RoboticArm:
     def __init__(self) -> None:
-        print('init1')
         self.com_port = None
         self.current_position = np.zeros(3)
         self.origin = np.zeros(3)
@@ -17,6 +16,8 @@ class RoboticArm:
         self.com_port = SerialPort(device_name, baud_rate)
 
     def load_current_position(self) -> None:
+        """Loads arm current position to RoboticArm.current_position object 
+        (numpy array of 3 elements [x,y,z])"""
         self.com_port.write('delp t1\r')
         time.sleep(0.5)
         #self.com_port.read_and_wait(0.5)
@@ -32,13 +33,9 @@ class RoboticArm:
         """ print('Getting Answer 1')
         print('Getting Answer') """
         answer = ''
-        while 'X' not in answer:
+        while 'X' not in answer: #waits for coordinates to show on serial bus
             answer = self.com_port.read_and_wait(0)
-        #print('Got Answer: ',answer, '\n')
-        #answer = self.com_port.read_and_wait(0.5)
-        #print('Got Answer: ',answer, '\n')
-        #answer = self.com_port.read_and_wait(0.5)
-        #print('Got Answer: ',answer, '\n')
+        
         """ answer='Position R22\r \
                 1: 893  2:-10506    3:-1117 4:-22676    5: 9\r \
                 X: 4632 Y:-71       Z: 7290 P:-264      R:-200' """
@@ -53,18 +50,14 @@ class RoboticArm:
         x = int(re.findall('[-+]?\d+', answer[x_start : x_end])[0])
         y = int(re.findall('[-+]?\d+', answer[y_start : y_end])[0])
         z = int(re.findall('[-+]?\d+', answer[z_start : z_end])[0])
-        #print(x_start, ',', x_end, ':', y_start, ',', y_end, ':', z_start, ',', z_end)
-        #print(answer[x_start : x_end], ':', answer[y_start : y_end], ':', answer[z_start : z_end])
-        #print(x)
-        #print(y)
-        #print(z)
+        
         self.current_position[0] = x
         self.current_position[1] = y
         self.current_position[2] = z
 
     def set_origin(self) -> None:
         """Defines drawing plane from 3 points"""
-
+        print('Calibrate Drawing Plane:')
         input('Move to Origin and press [Enter]')
         self.load_current_position()
         self.origin[0] = self.current_position[0]
@@ -115,22 +108,21 @@ class RoboticArm:
             + self.normal_vector[2]*point3[2])
 
     def home(self):
+        """Homes the robot"""
         self.com_port.write('home\r')
     
     def move_pos(self, name: str):
+        """Moves robot to predefined position <name>"""
         self.com_port.write('move '+name+'\r')
         time.sleep(0.5)
 
     def move_pos_vec(self, name: str, pos_vec: np.array(np.array)):
+        """Makes robot run through position vector <name> of size of <pos_vec>"""
         self.com_port.write('moves '+name+' '+str(1)+' '+str(pos_vec.shape[0])+'\r')
         time.sleep(15)
 
-    def run_pos_vector(self, name: str):
-        print('move '+name+'\r')
-        #self.com_port.write('move '+name+'\r')
-        time.sleep(0.05)
-
     def create_pos(self, name:str, x, y, z) -> None:
+        """Creates position <name> with coordinates (x,y,z)"""
         self.com_port.write('defp '+name+'\r')
         time.sleep(0.5)
         self.com_port.write('here '+name+'\r')
@@ -143,7 +135,7 @@ class RoboticArm:
         time.sleep(0.5)
     
     def create_pos_vector(self, name:str, pos_vec: np.array(np.array)) -> None:
-        #print('dimp '+name+'['+str(pos_vec.shape[0])+']'+'\r')
+        """Creates position vector <name> with all points from <pos_vec>"""
         self.com_port.write('dimp '+name+'['+str(pos_vec.shape[0])+']'+'\r')
         time.sleep(0.5)
         i=1
@@ -186,6 +178,6 @@ class RoboticArm:
         time.sleep(0.05)
 
     def get_z(self, x, y) -> int:
-        """Determines z for xy on drawing plane"""
+        """Determines z for given (x,y) on drawing plane"""
         return int(-(self.normal_vector[0]*x+self.normal_vector[1]*y+self.d)/ \
             self.normal_vector[2])

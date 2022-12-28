@@ -2,13 +2,15 @@ from robotic_arm import RoboticArm
 from load_image import PATH
 import numpy as np
 import time
+import sys
 
 print('Starting')
 print('###########################')
 print('###### Loading Image ######')
 print('###########################')
 drawing = PATH()
-drawing.load_paths_png('images/test_draw_1.png')
+print('Image: ', sys.argv[1])
+drawing.load_paths_png(sys.argv[1])
 
 print('############################')
 print('#### Initializing Robot ####')
@@ -21,7 +23,7 @@ robot.set_origin()
 print('###########################')
 print('##### Preparing Image #####')
 print('###########################')
-scale=0.25
+scale=float(sys.argv[2])
 max_points=0
 for path in drawing.points:
     if len(path) > max_points:
@@ -33,11 +35,12 @@ for i in range(len(drawing.points)):
         pos_vec_array[i][j][0]=drawing.points[i][j][0]*scale+robot.origin[0]
         pos_vec_array[i][j][1]=drawing.points[i][j][1]*scale+robot.origin[1]
         pos_vec_array[i][j][2]=robot.get_z(pos_vec_array[i][j][0], pos_vec_array[i][j][1])
-print(pos_vec_array)
+#print(pos_vec_array)
 
-
+""" move robot to position above origin for loading image points to robot """
 robot.create_pos('t1', int(robot.origin[0]),int(robot.origin[1]),int(robot.origin[2]+300))
 robot.move_pos('t1')
+
 print('###########################')
 print('######### Drawing #########')
 print('###########################')
@@ -50,3 +53,6 @@ for i,vec in enumerate(pos_vec_array):
     robot.move_pos_vec(str('vdz'+str(i)), vec)
     print('Done')
 
+print('###########################')
+print('######### Finished ########')
+print('###########################')
