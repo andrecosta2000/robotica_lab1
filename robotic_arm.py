@@ -27,6 +27,7 @@ class RoboticArm:
         self.com_port.write('here t1\r')
         time.sleep(0.5)
         answer = self.com_port.read_and_wait(2)
+        #print(answer)
         self.com_port.write('listpv t1\r')
         """ print('Getting Answer 1')
         print('Getting Answer') """
@@ -81,6 +82,13 @@ class RoboticArm:
         point3[0]=self.current_position[0]
         point3[1]=self.current_position[1]
         point3[2]=self.current_position[2]
+        self.load_current_position()
+        self.com_port.write('delp t1\r')
+        time.sleep(0.5)
+        self.com_port.write('yes\r')
+        time.sleep(0.5)
+        self.create_pos('t1',int(self.current_position[0]), int(self.current_position[1]), int(self.current_position[2]+300))
+        self.move_pos('t1')
         print('######################')
         print('######################')
         print(self.origin)
@@ -88,19 +96,17 @@ class RoboticArm:
         print(point3)
         print('######################')
         print('######################')
-        """ self.origin[0]=1000
-        self.origin[1]=300
-        self.origin[2]=-200
-
+        """ self.origin[0]=3698
+        self.origin[1]=-2197
+        self.origin[2]=-635
         point2=np.zeros(3)
-        point2[0]=2000
-        point2[1]=300
-        point2[2]=-200
-
+        point2[0]=4938
+        point2[1]=-2230
+        point2[2]=-660
         point3=np.zeros(3)
-        point3[0]=2000
-        point3[1]=1000
-        point3[2]=-300 """
+        point3[0]=3984
+        point3[1]=500
+        point3[2]=-595 """
 
         ab=point2-self.origin
         ac=point3-self.origin
@@ -117,7 +123,7 @@ class RoboticArm:
 
     def move_pos_vec(self, name: str, pos_vec: np.array(np.array)):
         self.com_port.write('moves '+name+' '+str(1)+' '+str(pos_vec.shape[0])+'\r')
-        time.sleep(0.5)
+        time.sleep(15)
 
     def run_pos_vector(self, name: str):
         print('move '+name+'\r')
@@ -140,18 +146,40 @@ class RoboticArm:
         #print('dimp '+name+'['+str(pos_vec.shape[0])+']'+'\r')
         self.com_port.write('dimp '+name+'['+str(pos_vec.shape[0])+']'+'\r')
         time.sleep(0.5)
-        for i in range(1, pos_vec.shape[0]+1):
+        i=1
+        self.com_port.write('here '+name+'['+str(i)+']'+'\r')
+        time.sleep(0.5)
+        self.com_port.write('SETPVc '+name+'['+str(i)+']'+' x '+str(int(pos_vec[0][0]))+'\r')
+        time.sleep(0.5)
+        self.com_port.write('SETPVc '+name+'['+str(i)+']'+' y '+str(int(pos_vec[0][1]))+'\r')
+        time.sleep(0.5)
+        self.com_port.write('SETPVc '+name+'['+str(i)+']'+' z '+str(int(pos_vec[0][2]+300))+'\r')
+        time.sleep(0.5)
+        self.com_port.read_and_wait(1)
+        for i in range(2, pos_vec.shape[0]+1):
+            print('Loading point ', i,' of ', pos_vec.shape[0])
             #print('here '+name+'['+str(i)+']'+'\r')
             #self.create_pos(name+'['+str(i)+']', pos_vec[i-1][0],pos_vec[i-1][1],pos_vec[i-1][2])
-            self.com_port.write('here '+name+'['+str(i)+']'+'\r')
-            time.sleep(0.5)
-            self.com_port.write('SETPVc '+name+'['+str(i)+']'+' x '+str(int(pos_vec[i-1][0]))+'\r')
-            time.sleep(0.5)
-            self.com_port.write('SETPVc '+name+'['+str(i)+']'+' y '+str(int(pos_vec[i-1][1]))+'\r')
-            time.sleep(0.5)
-            self.com_port.write('SETPVc '+name+'['+str(i)+']'+' z '+str(int(pos_vec[i-1][2]))+'\r')
-            time.sleep(0.5)
-            self.com_port.read_and_wait(1)
+            if pos_vec[i-1][2] == 0:
+                self.com_port.write('here '+name+'['+str(i)+']'+'\r')
+                time.sleep(0.5)
+                self.com_port.write('SETPVc '+name+'['+str(i)+']'+' x '+str(int(pos_vec[i-2][0]))+'\r')
+                time.sleep(0.5)
+                self.com_port.write('SETPVc '+name+'['+str(i)+']'+' y '+str(int(pos_vec[i-2][1]))+'\r')
+                time.sleep(0.5)
+                self.com_port.write('SETPVc '+name+'['+str(i)+']'+' z '+str(int(pos_vec[i-2][2]+300))+'\r')
+                time.sleep(0.5)
+                self.com_port.read_and_wait(1)
+            else:
+                self.com_port.write('here '+name+'['+str(i)+']'+'\r')
+                time.sleep(0.5)
+                self.com_port.write('SETPVc '+name+'['+str(i)+']'+' x '+str(int(pos_vec[i-1][0]))+'\r')
+                time.sleep(0.5)
+                self.com_port.write('SETPVc '+name+'['+str(i)+']'+' y '+str(int(pos_vec[i-1][1]))+'\r')
+                time.sleep(0.5)
+                self.com_port.write('SETPVc '+name+'['+str(i)+']'+' z '+str(int(pos_vec[i-1][2]))+'\r')
+                time.sleep(0.5)
+                self.com_port.read_and_wait(1)
             
         #self.com_port.write('dimp '+name+'['+pos_vec.shape[0]+']'+'\r')
         

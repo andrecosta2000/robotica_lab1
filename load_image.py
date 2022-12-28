@@ -36,7 +36,6 @@ class PATH:
         
         self.points[0]=self.points[0][:counter]
        
-
     def removepoints(self, file_name: str):
         font = cv.FONT_HERSHEY_COMPLEX
         img3 = cv.imread(file_name, cv.IMREAD_COLOR)
@@ -69,14 +68,14 @@ class PATH:
                     # text on remaining co-ordinates.
                 cv.putText(img3, string, (x, y), 
                         font, 1, (255, 0, 0))
-        cv.polylines(img3, self.points , False, (0,0,255), 2)
+        #cv.polylines(img3, self.points , False, (0,0,255), 2)
        
             
         # String containing the co-ordinates.
         
-        plt.imshow(img3)
+        #plt.imshow(img3)
         #print(self.points[0][0])
-        plt.show()
+        #plt.show()
 
     def load_paths_png(self, file_name: str):
         """Loads paths from <file_name>.png image"""
@@ -122,28 +121,24 @@ class PATH:
                 i = i + 1
         #self.points=aux
 
-        #------------tirar o comment pq rresolve para um contour
-        """for sublist in aux:
-            for item in sublist:
-                self.points.append(item)"""
-        # ---------até aqui
-
-        plt.imshow(img2)
-        plt.show()
+        #plt.imshow(img2)
+        #plt.show()
 
 
-        self.removepoints("images/test_draw_2.png")
+        self.removepoints(file_name)
+        #print(self.points)
 
-    
     def load_paths_svg(self, file_name: str):
         """Loads paths from <file_name>.svg image"""
         #self.paths, attribute_dictionary_list = svgpathtools.svg2paths(file_name)
+
     def generate_arm_positions(self):
         """Generate arm positions for m paths with varying #positions [[[pos_1x1]...[pos_1xk]]...[[pos_mx1]...[pos_mxb]]]"""
         positions=1
         n_paths=self.paths.__sizeof__()
         i=0
-        for path in self.paths:
+        print("here")
+        """for path in self.paths:
             i=i+1
             #print(path)
             for segment in path:
@@ -156,18 +151,8 @@ class PATH:
                     print('-> CornerSegment')
                     print(segment.c.x, '\t', segment.c.x)
                     print(segment.end_point.x, '\t', segment.end_point.y)
-                """ print('(', segment.start.real, ' , ', segment.start.imag,')', 
+                    print('(', segment.start.real, ' , ', segment.start.imag,')', 
                     '->', '(', segment.end.real, ' , ', segment.end.imag,')') """
         return positions, n_paths
 
 
-#potrace.potrace.CornerSegment
-
-path = PATH()
-path.load_paths_png("images/test_draw_2.png")
-#path.generate_arm_positions()
-""" for path in path.paths:
-    for segment in path:
-        print(segment)
-        print('(', segment.start.real, ' , ', segment.start.imag,')', '->', '(', 
-            segment.end.real, ' , ', segment.end.imag,')') """
