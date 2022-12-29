@@ -7,7 +7,6 @@ import cv2 as cv
 import matplotlib.pyplot as plt
 import math
 import numpy as np
-from shapely.geometry import Polygon, Point, LineString
 
 class PATH:
     def __init__(self) -> None:
@@ -15,133 +14,179 @@ class PATH:
         self.paths = None
         self.points: list = []
 
-    def remove_point_contour(self):
-        j=0
-        i=2
-        counter = 0
-
-        print(len(self.points[0]))
-        while (j < len(self.points[0]) ):
-            while (i < len(self.points[0])):
-                distance = math.dist(self.points[0][j],self.points[0][i])
-                print("Counter",distance)
-                if distance <100:
-                    counter=i
-                    
-                i += 1
-            j+=1
-            i=j+1
-        
-        self.points[0]=self.points[0][:counter]
-        print(self.points[0])
-    
-    
-    def remove_duplicate_lines(self):
-        unique_contours=[]
-        aux=[]
-        flag=False
-
-
-        for i in range(len(self.points[0])):
-            for j in range(1,len(self.points[1:])):
-                for idx,_ in enumerate(self.points[j]):
-                    if (math.dist(self.points[0][i],self.points[j][idx]) < 100):
-                        aux=self.points[0][i:]
-
-        self.points[0]=aux
-
-
-        """
-        for a1 in self.points[0:1]:
-            for a2 in self.points[1:2]:
-                for point1 in a1:
-                    if math.dist(point1[0],a2[0][0]) < 100 and flag == False:
-                        flag= True
-                        for point2 in a2:
-                            unique_contours.append(point2[0])
-                    unique_contours.append(point1[0])"""
-        #for i in
-        """
-        
-        loop=0
-
-
-        
-                if(flag):
-                    continue
-                else:
-                    self.points[loop]=self.points[loop][idx:]
-                    break 
-            
-
-        for n in range(len(aux)):
-            initial_p=aux[n][0]
-            final_p=aux[n][len(aux[n])-1]
-            print(initial_p, final_p)
-            for i, point in enumerate(unique_contours):
-                print(i,point)
-                dist1=math.dist(initial_p,point[0])
-                dist2=math.dist(final_p,point[len(point)-1])
-
-                #(dist1<35): #means that the contour starts at the first point of the parent contour
-                    
-                #if(dist2<35): #means that the contour starts at the last point of the parent contour
-
-        # Invert the child contour
-        
-
-        # Keep the points of the parent contour that aren't in the child contour"""
-        
 
 
     def remove_point_contour_ext(self):
         j=0
         i=2
-
+        
+        first=0
         flag=False
-        another = False
 
-        print(len(self.points[0]))
-        for j in range(len(self.points)):
+        for i in range(len(self.points)):
+            last=len(self.points[i])
             first=0
-            last=0
-            for i in range(len(self.points[j])-2):
-                dis1=math.dist(self.points[j][i], self.points[j][i+1])
-                dis2=math.dist(self.points[j][i], self.points[j][i+2])
-                
-                if(flag):
-                    if(int(dis2) < 35 and dis2<dis1):
-                        last=i+2 #it should be plus 1 however when doing, i.e, points[:last] it would not have in consideration the last value
-                else:
-                    if(int(dis2)< 35 and dis2<dis1):
-                        first=i+1
-                        flag=True
-                        
+            for j,_ in enumerate(self.points[i]):
+                if(j<len(self.points[i])-2):
+
+                    dis1=math.dist(self.points[i][j], self.points[i][j+1])
+                    dis2=math.dist(self.points[i][j], self.points[i][j+2])
+                    
+                    if(flag):
+                        if(int(dis2) < 100 and dis2<dis1):
+                            last=j+2 #it should be plus 1 however when doing, i.e, points[:last] it would not have in consideration the last value
+                            print("Last", j,i)
+                    else:
+                        if(int(dis2)< 100 and dis2<dis1):
+                            first=j+1 #since its the nex
+                            print("Firs", j,i)
+                            flag=True
+                            
             if(last == 0 and first==0): 
-                self.points[j]=self.points[j]
-                last=len(self.points[j])
-            elif last!=0:
-                self.points[j]=self.points[j][first:last]
-            else:
-                last=first+1
-                self.points[j]=self.points[j][:last]
-                print("Here2",last, j)
-        if(len(self.points)>1):
-            self.remove_duplicate_lines()
-        self.points.reverse()
+                first=0
+                last=len(self.points[i])
+            elif (last == 0 and first !=0) :
+                last=last+1
+            print(first,last)
+            self.points[i]=self.points[i][first:last]
+
        
     def removepoints(self, file_name: str):
         font = cv.FONT_HERSHEY_COMPLEX
         img3 = cv.imread(file_name, cv.IMREAD_COLOR)
+        unique_contours=[]
+        flag=False
+        last=len(self.points[0])
+        first=0
 
+        
+
+        #self.remove_point_contour_ext(file_name) #removes the repeated points from the external contour
+        self.remove_point_contour_ext()
+
+        for a2 in self.points[1:]:
+            print("another")
+            for point in a2:
+                print(point)
+                unique_contours.append(point)
+            aux=np.array(unique_contours).ravel()
+
+        for idx in range(len(unique_contours)-1):
+            for j in range(idx+1,len(unique_contours)):
+                if(math.dist(unique_contours[idx],unique_contours[j])<100):
+                    print(unique_contours[idx],unique_contours[j])
+        
+        """for a1 in self.points[0]:
+            flag=False
+            for point in unique_contours:
+                if math.dist(a1,point) < 100:
+                    flag=True
+            if(flag==False):
+                unique_contours.append(a1)
+            if(flag==False):
+                unique_contours.append(a1)  
+                if(flag1==True):
+                    control=0
+                    for point in a2:
+                        if (math.dist(a1,point) <100):
+                            print("hi", a1, point)
+                            control=1
+                            break
+                    
+                    if(control==0):
+                        print(point, a1)
+                        unique_contours.append(a1)
+                        break
+"""
+                #unique_contours.append(a1)
+
+        
+        self.points = np.array(aux)
+        """flag=False
+        last=len(unique_contours)
+        first=0
+
+        self.points = np.array(unique_contours)
+
+        print(len(self.points[0]))
+        for j in range(len(self.points)-2):
+            
+            dis1=math.dist(self.points[j], self.points[j+1])
+            dis2=math.dist(self.points[j], self.points[j+2])
+            
+            if(flag):
+                if(int(dis2) < 100 and dis2<dis1):
+                    last=j+1 #it should be plus 1 however when doing, i.e, points[:last] it would not have in consideration the last value
+                    print("Last", j)
+            else:
+                if(int(dis2)< 100 and dis2<dis1):
+                    first=j+1 #since its the next
+                    print("Firs", j)
+                    flag=True
+                        
+
+        if(last == 0 and first==0): 
+                first=0
+                last=len(self.points)
+        elif (last ==0 and first !=0) :
+            last=last+1
+        print(first, last)    
+        self.points=self.points[first:last]
+
+"""
+        """
+        first_idx = 0
+        last_idx = len(unique_contours)
+        extreme = 0
+        
+        for idx, _ in enumerate(unique_contours):
+            if(idx<len(unique_contours)-2):
+                if math.dist(unique_contours[idx],unique_contours[idx+2]) < 200 :
+                    extreme += 1
+                    if (extreme == 1 and len(self.points)==2):
+                        first_idx = idx+1
+                    elif (extreme == 2):
+                        last_idx = idx+1
+                        break
+        
+        for idx, _ in enumerate(unique_contours):
+            if math.dist(unique_contours[idx],unique_contours[first_idx]) < 100 and idx != first_idx:
+                first_idx += 1
+                break
+"""
+        #unique_contours = unique_contours[first_idx:last_idx+1]
+
+        
+
+        #for i in range(len(unique_contours)):
+            #unique_contours[i]=np.reshape(np.array(unique_contours[i]),(-1,2))
+
+
+        num=0
 
         for i in range(len(self.points)):
+            x = self.points[i][0]
+            y = self.points[i][1]
+            string = str(x) + " " + str(y) + " " + str(num)
+                # text on remaining co-ordinates.
+            if( i==0):
+                cv.putText(img3, string, (x, y), 
+                    font, 1, (255, 0, 0))
+            elif i==1 :
+                cv.putText(img3, string, (x, y), 
+                    font, 1, (0, 0, 255))
+            else:
+                cv.putText(img3, string, (x, y), 
+                    font, 1, (0, 255, 0))
+            num += 1
+
+
+
+
+        """for i in range(len(self.points)):
             self.points[i]=np.reshape(np.array(self.points[i]),(-1,2))
 
         self.remove_point_contour_ext() #removes the points that are similar on the external contour
-
-        #if(len(self.points)>1):
-            #self.reorder_contour()
 
 
         num=0
@@ -150,7 +195,7 @@ class PATH:
             for i in range(len(self.points[j])):
                 x = self.points[j][i][0]
                 y = self.points[j][i][1]
-                string = str(x) + " " + str(y) + " " + str(num)
+                string = str(x) + " " + str(y) + " " + str(i)
                     # text on remaining co-ordinates.
                 if( j==0):
                     cv.putText(img3, string, (x, y), 
@@ -161,9 +206,9 @@ class PATH:
                 else:
                     cv.putText(img3, string, (x, y), 
                         font, 1, (0, 255, 0))
-                num += 1
+                num += 1"""
         
-        cv.polylines(img3, self.points , False, (0,0,255), 2)
+        cv.polylines(img3, [self.points] , False, (0,0,255), 2)
        
             
         # String containing the co-ordinates.
@@ -178,14 +223,14 @@ class PATH:
         imgray = cv.cvtColor(im1, cv.COLOR_BGR2GRAY)
         imgray = cv.GaussianBlur(imgray, (5, 5), 0)
         img2 = cv.imread(file_name, cv.IMREAD_COLOR)
+        img3 = cv.imread(file_name, cv.IMREAD_COLOR)
         ret, thresh = cv.threshold(imgray, 127, 255,cv.THRESH_BINARY_INV)
         
         contours, hierarchy = cv.findContours(thresh, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
-        self.hierarchy=hierarchy
 
         for cnt in contours :
   
-            approx = cv.approxPolyDP(cnt, 0.0009*cv.arcLength(cnt, True), True)
+            approx = cv.approxPolyDP(cnt, 0.0009*cv.arcLength(contours[0], False), False)
             # draws boundary of contours
             cv.drawContours(img2, [approx], -1, (0, 255, 0), 2) 
             # Used to flatted the array containing
@@ -197,11 +242,12 @@ class PATH:
         for i in range(len(self.points)):
             self.points[i]=np.reshape(np.array(self.points[i]),(-1,2))
 
+
         for j in range(len(self.points)):
             for i in range(len(self.points[j])):
                 x = self.points[j][i][0]
                 y = self.points[j][i][1]
-                string = str(x) + " " + str(y) + " " + str(num)
+                string = str(x) + " " + str(y) + " " + str(i)
                     # text on remaining co-ordinates.
                 if( j==0):
                     cv.putText(img2, string, (x, y), 
@@ -218,11 +264,36 @@ class PATH:
         plt.imshow(img2)
         plt.show()
 
+        if(len(self.points)>1):
+            self.removepoints(file_name)
 
-        self.removepoints(file_name)
+        else:
+            self.remove_point_contour_ext()
+            for j in range(len(self.points)):
+                for i in range(len(self.points[j])):
+                    x = self.points[j][i][0]
+                    y = self.points[j][i][1]
+                    string = str(x) + " " + str(y) + " " + str(i)
+                        # text on remaining co-ordinates.
+                    if( j==0):
+                        cv.putText(img3, string, (x, y), 
+                            font, 1, (255, 0, 0))
+                    elif j==1 :
+                        cv.putText(img3, string, (x, y), 
+                            font, 1, (0, 0, 255))
+                    else:
+                        cv.putText(img3, string, (x, y), 
+                            font, 1, (0, 255, 0))
+                    num += 1
+                    cv.polylines(img3, self.points , False, (0,0,255), 2)
+            plt.imshow(img3)
+            plt.show()
 
 
-#path=PATH()
-#path.load_paths_png('images/test_draw_2.png')
+        #self.removepoints(file_name)
+
+
+path=PATH()
+path.load_paths_png('images/test_draw_2.png')
 
 
