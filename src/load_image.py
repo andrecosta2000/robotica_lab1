@@ -71,7 +71,6 @@ class PATH:
         #cv.polylines(img3, self.points , False, (0,0,255), 2)
        
             
-        # String containing the co-ordinates.
         
         #plt.imshow(img3)
         #print(self.points[0][0])
@@ -100,26 +99,7 @@ class PATH:
             n = approx.ravel()
             i = 0
             self.points.append(n)
-            self.n_points.append(len(n))
-            for j in n :
-                if(i % 2 == 0):
-                    x = n[i]
-                    y = n[i + 1]
-
-                    # String containing the co-ordinates.
-                    string = str(x) + " " + str(y) 
-        
-                    if(i == 0):
-                        # text on topmost co-ordinate.
-                        cv.putText(img2, "Arrow tip", (x, y),
-                                        font, 1, (255, 0, 0)) 
-                    else:
-                        # text on remaining co-ordinates.
-                        cv.putText(img2, string, (x, y), 
-                                font, 1, (0, 255, 0)) 
-                
-                i = i + 1
-        #self.points=aux
+            
 
         #plt.imshow(img2)
         #plt.show()
@@ -127,32 +107,6 @@ class PATH:
 
         self.removepoints(file_name)
         #print(self.points)
-
-    def load_paths_svg(self, file_name: str):
-        """Loads paths from <file_name>.svg image"""
-        #self.paths, attribute_dictionary_list = svgpathtools.svg2paths(file_name)
-
-    def generate_arm_positions(self):
-        """Generate arm positions for m paths with varying #positions [[[pos_1x1]...[pos_1xk]]...[[pos_mx1]...[pos_mxb]]]"""
-        positions=1
-        n_paths=self.paths.__sizeof__()
-        i=0
-        print("here")
-        """for path in self.paths:
-            i=i+1
-            #print(path)
-            for segment in path:
-                if isinstance(segment, potrace.BezierSegment):
-                    print('-> BezierSegment')
-                    print(segment.c1.x, '\t', segment.c1.x)
-                    print(segment.c2.x, '\t', segment.c2.y)
-                    print(segment.end_point.x, '\t',  segment.end_point.y)
-                if isinstance(segment, potrace.CornerSegment):
-                    print('-> CornerSegment')
-                    print(segment.c.x, '\t', segment.c.x)
-                    print(segment.end_point.x, '\t', segment.end_point.y)
-                    print('(', segment.start.real, ' , ', segment.start.imag,')', 
-                    '->', '(', segment.end.real, ' , ', segment.end.imag,')') """
-        return positions, n_paths
-
-
+path=PATH()
+path.load_paths_png("images/test_draw_1.png")
+    
