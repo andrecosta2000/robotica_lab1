@@ -107,6 +107,3 @@ class PATH:
 
         self.removepoints(file_name)
         #print(self.points)
-path=PATH()
-path.load_paths_png("images/test_draw_1.png")
-    
