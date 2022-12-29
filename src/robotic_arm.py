@@ -77,9 +77,9 @@ class RoboticArm:
         point3[2]=self.current_position[2]
         self.load_current_position()
         self.com_port.write('delp t1\r')
-        time.sleep(0.5)
+        time.sleep(1)
         self.com_port.write('yes\r')
-        time.sleep(0.5)
+        time.sleep(1)
         self.create_pos('t1',int(self.current_position[0]), int(self.current_position[1]), int(self.current_position[2]+300))
         self.move_pos('t1')
         print('######################')
