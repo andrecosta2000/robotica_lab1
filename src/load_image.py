@@ -118,5 +118,5 @@ class PATH:
         for i in range(len(self.points)):
             self.points[i]=np.reshape(np.array(self.points[i]),(-1,2))
 
-        self.removepoints(file_name)
+        self.remove_point_contour_ext()
  
