@@ -17,24 +17,36 @@ class PATH:
     def remove_point_contour_ext(self):
         j=0
         i=2
-        counter =[]
-
-        self.points[0]=self.points[0].tolist()
-        final_iter=self.n_points[0]
-
-        while (j < final_iter ):
-            while (i < final_iter):
-                distance = math.sqrt((self.points[0][j]-self.points[0][i])**2 + (self.points[0][j+1]-self.points[0][i+1])**2)
-                if distance < 35: #we choose this threshold since it gave the best results
-                    counter=i
-                    self.points[0].pop(i)
-                    self.points[0].pop(i)
-                    final_iter-=2
-                i += 2
-            j+=2
-            i=j+2
         
-        self.points[0]=self.points[0][:counter]
+        first=0
+        flag=False
+
+        for i in range(len(self.points)):
+            last=len(self.points[i])
+            first=0
+            for j,_ in enumerate(self.points[i]):
+                if(j<len(self.points[i])-2):
+
+                    dis1=math.dist(self.points[i][j], self.points[i][j+1])
+                    dis2=math.dist(self.points[i][j], self.points[i][j+2])
+                    
+                    if(flag):
+                        if(int(dis2) < 100 and dis2<dis1):
+                            last=j+2 #it should be plus 1 however when doing, i.e, points[:last] it would not have in consideration the last value
+                            print("Last", j,i)
+                    else:
+                        if(int(dis2)< 100 and dis2<dis1):
+                            first=j+1 #since its the nex
+                            print("Firs", j,i)
+                            flag=True
+                            
+            if(last == 0 and first==0): 
+                first=0
+                last=len(self.points[i])
+            elif (last == 0 and first !=0) :
+                last=last+1
+            print(first,last)
+            self.points[i]=self.points[i][first:last]
        
     def removepoints(self, file_name: str):
         font = cv.FONT_HERSHEY_COMPLEX
@@ -91,7 +103,7 @@ class PATH:
 
         for cnt in contours :
   
-            approx = cv.approxPolyDP(cnt, 0.0009*cv.arcLength(cnt, True), True)
+            approx = cv.approxPolyDP(cnt, 0.0009*cv.arcLength(contours[0], True), True)
             # draws boundary of contours 
             cv.drawContours(img2, [approx], -1, (0, 255, 0), 2) 
             # Used to flatted the array containing
@@ -103,7 +115,8 @@ class PATH:
 
         #plt.imshow(img2)
         #plt.show()
-
+        for i in range(len(self.points)):
+            self.points[i]=np.reshape(np.array(self.points[i]),(-1,2))
 
         self.removepoints(file_name)
-        #print(self.points)
+ 
