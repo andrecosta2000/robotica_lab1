@@ -6,7 +6,7 @@ import time
 
 class SerialPort:
     def __init__(self, serial_device: str, baud_rate: int) -> None:
-        print('here')
+        #print('here')
         self.port = serial.Serial(serial_device, baud_rate, timeout=2)#, stopbits)
         print("COM port in use: {0}".format(self.port.name))
 
