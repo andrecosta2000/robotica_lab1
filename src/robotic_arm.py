@@ -20,7 +20,7 @@ class RoboticArm:
         (numpy array of 3 elements [x,y,z])"""
         self.com_port.write('delp t1\r')
         time.sleep(1)
-        #self.com_port.read_and_wait(0.5)
+        #self.com_port.read_and_wait(1)
         self.com_port.write('yes\r')
         time.sleep(1)
         self.com_port.write('defp t1\r')
