@@ -36,6 +36,7 @@ class PATH:
             last=last+1
         self.points[0]=self.points[0][first:last]
 
+
        
     def removepoints(self, file_name: str):
         font = cv.FONT_HERSHEY_COMPLEX
@@ -76,27 +77,10 @@ class PATH:
             
         
         num=0
-        self.points=np.reshape(np.array(unique_contours),(-1,2))
+        self.points=((np.array(unique_contours),(-1,2))) #added another value since our implementation receives a list of lists
         
 
-        for j in range(len(self.points)):
-            x = self.points[j][0]
-            y = self.points[j][1]
-            string = str(x) + " " + str(y) + " " + str(num)
-                # text on remaining co-ordinates.
-            cv.putText(img3, string, (x, y), 
-                    font, 1, (255, 0, 0))
-            num += 1
 
-        
-
-        cv.polylines(img3, [self.points] , False, (0,0,255), 2)
-       
-            
-        # String containing the co-ordinates.
-        
-        plt.imshow(img3)
-        plt.show()
 
     def load_paths_png(self, file_name: str):
         """Loads paths from <file_name>.png image"""
@@ -124,51 +108,12 @@ class PATH:
         for i in range(len(self.points)):
             self.points[i]=np.reshape(np.array(self.points[i]),(-1,2))
 
-
-        for j in range(len(self.points)):
-            for i in range(len(self.points[j])):
-                x = self.points[j][i][0]
-                y = self.points[j][i][1]
-                string = str(x) + " " + str(y) + " " + str(i)
-                    # text on remaining co-ordinates.
-                if( j==0):
-                    cv.putText(img2, string, (x, y), 
-                        font, 1, (255, 0, 0))
-                elif j==1 :
-                    cv.putText(img2, string, (x, y), 
-                        font, 1, (0, 0, 255))
-                else:
-                    cv.putText(img2, string, (x, y), 
-                        font, 1, (0, 255, 0))
-                num += 1
-        
-
-        plt.imshow(img2)
-        plt.show()
-
         if(len(self.points)>1):
             self.removepoints(file_name)
+            
         else:
             self.remove_duplicate_points_1cnt()
-            for j in range(len(self.points)):
-                for i in range(len(self.points[j])):
-                    x = self.points[j][i][0]
-                    y = self.points[j][i][1]
-                    string = str(x) + " " + str(y) + " " + str(i)
-                        # text on remaining co-ordinates.
-                    if( j==0):
-                        cv.putText(img3, string, (x, y), 
-                            font, 1, (255, 0, 0))
-                    elif j==1 :
-                        cv.putText(img3, string, (x, y), 
-                            font, 1, (0, 0, 255))
-                    else:
-                        cv.putText(img3, string, (x, y), 
-                            font, 1, (0, 255, 0))
-                    num += 1
-                    cv.polylines(img3, self.points , False, (0,0,255), 2)
-            plt.imshow(img3)
-            plt.show()
+
 
 
 
