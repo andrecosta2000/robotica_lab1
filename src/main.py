@@ -49,7 +49,7 @@ for i,vec in enumerate(pos_vec_array):
     robot.create_pos_vector(str('vdz'+str(i)), vec)
     print('Drawing...')
     robot.move_pos_vec(str('vdz'+str(i)), vec)
-    time.sleep(30)
+    time.sleep(7)
     print('Done')
 
 print('###########################')

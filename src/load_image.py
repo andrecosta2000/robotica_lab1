@@ -39,8 +39,6 @@ class PATH:
 
        
     def removepoints(self, file_name: str):
-        font = cv.FONT_HERSHEY_COMPLEX
-        img3 = cv.imread(file_name, cv.IMREAD_COLOR)
         unique_contours=[]
         flag=False
 
@@ -76,7 +74,6 @@ class PATH:
 
             
         
-        num=0
         self.points=((np.array(unique_contours),(-1,2))) #added another value since our implementation receives a list of lists
         
 
@@ -89,8 +86,7 @@ class PATH:
         imgray = cv.cvtColor(im1, cv.COLOR_BGR2GRAY)
         imgray = cv.GaussianBlur(imgray, (5, 5), 0)
         img2 = cv.imread(file_name, cv.IMREAD_COLOR)
-        img3 = cv.imread(file_name, cv.IMREAD_COLOR)
-        ret, thresh = cv.threshold(imgray, 127, 255,cv.THRESH_BINARY_INV)
+        ret, thresh = cv.threshold(imgray, 127, 255,cv.THRESH_BINARY_INV) #since the blackground is white instead of black we use THRESH_BINARY_INV 
         
         contours, hierarchy = cv.findContours(thresh, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
 

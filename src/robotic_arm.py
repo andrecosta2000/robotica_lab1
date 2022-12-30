@@ -175,7 +175,7 @@ class RoboticArm:
             
         #self.com_port.write('dimp '+name+'['+pos_vec.shape[0]+']'+'\r')
         
-        time.sleep(0.05)
+        time.sleep(1)
 
     def get_z(self, x, y) -> int:
         """Determines z for given (x,y) on drawing plane"""
