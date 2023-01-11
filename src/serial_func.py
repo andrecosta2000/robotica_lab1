@@ -38,7 +38,7 @@ class SerialPort:
         init_time=time.time()
         out=''
         out=self.read_and_wait(0)
-        while(out!='>' & time.time()-init_time<10):
+        while(out!='>' and time.time()-init_time<10):
             out=self.read_and_wait(0)
         
         if time.time()-init_time>=10:
