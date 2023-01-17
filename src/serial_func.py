@@ -24,7 +24,7 @@ class SerialPort:
                 # Print the contents of the serial data
                 try:
                     output = serString.decode("Ascii")
-                    #print(serString.decode("Ascii"))
+                    print(serString.decode("Ascii"))
                 except:
                     pass
             else:
@@ -35,11 +35,15 @@ class SerialPort:
     
     def write(self, str: str):
         self.port.write(bytearray(str, 'ascii'))
+        time.sleep(0.5)
         init_time=time.time()
         out=''
-        out=self.read_and_wait(0)
+        out=self.read_and_wait(0.05)
         while(out!='>' and time.time()-init_time<10):
-            out=self.read_and_wait(0)
+            out=self.read_and_wait(0.05)
+            if out != '':
+                print(out)
+            print(time.time()-init_time)
         
         if time.time()-init_time>=10:
             print('communication failed')

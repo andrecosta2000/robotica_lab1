@@ -17,6 +17,7 @@ print('#### Initializing Robot ####')
 print('############################')
 robot = RoboticArm()
 robot.open_coms(sys.argv[3], 9600)
+print('bla')
 robot.load_current_position()
 robot.set_origin()
 
