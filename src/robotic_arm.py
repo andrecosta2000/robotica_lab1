@@ -32,9 +32,13 @@ class RoboticArm:
         self.com_port.write('listpv t1\r')
         """ print('Getting Answer 1')
         print('Getting Answer') """
-        answer = ''
+        answer = 'test'
         while 'X' not in answer: #waits for coordinates to show on serial bus
+            #print('trying-------')
             answer = self.com_port.read_and_wait(0)
+            #print('----------')
+            #print(answer)
+            #print('----------')
         
         """ answer='Position R22\r \
                 1: 893  2:-10506    3:-1117 4:-22676    5: 9\r \
@@ -50,6 +54,7 @@ class RoboticArm:
         x = int(re.findall('[-+]?\d+', answer[x_start : x_end])[0])
         y = int(re.findall('[-+]?\d+', answer[y_start : y_end])[0])
         z = int(re.findall('[-+]?\d+', answer[z_start : z_end])[0])
+        print(x)
         
         self.current_position[0] = x
         self.current_position[1] = y

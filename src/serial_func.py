@@ -24,27 +24,29 @@ class SerialPort:
                 # Print the contents of the serial data
                 try:
                     output = serString.decode("Ascii")
-                    print(serString.decode("Ascii"))
+                    #print('123-----')
+                    #print(output)
+                    #print('1234-----')
                 except:
                     pass
-            else:
-                deltat = time.time() - start_time
-                if deltat>wait_time:
-                    flag = False
+            #else:
+                #deltat = time.time() - start_time
+                #if deltat>wait_time:
+            flag = False
         return output
     
     def write(self, str: str):
         self.port.write(bytearray(str, 'ascii'))
-        time.sleep(0.5)
-        init_time=time.time()
-        out=''
-        out=self.read_and_wait(0.05)
+        time.sleep(1)
+        """ init_time=time.time()
+        out='' """
+        """ out=self.read_and_wait(0.5)
         while(out!='>' and time.time()-init_time<10):
-            out=self.read_and_wait(0.05)
+            out=self.read_and_wait(0.5)
             if out != '':
                 print(out)
-            print(time.time()-init_time)
+            print(time.time()-init_time) """
         
-        if time.time()-init_time>=10:
+        """ if time.time()-init_time>=5:
             print('communication failed')
-            exit() 
+            exit()  """
